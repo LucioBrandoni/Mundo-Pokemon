@@ -94,6 +94,7 @@ function elegirStarter() {
 let nick = iniciarJugador();
 alert(`Bienvenido, ${nick} !\n Tu aventura Pokémon comienza ahora !`);
 
+
 let starter = elegirStarter();
 mostrarPokemon(starter);
 
