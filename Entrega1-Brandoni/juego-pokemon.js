@@ -101,3 +101,7 @@ mostrarPokemon(starter);
 
 alert(`${nick}, tu compañero será ${starter.nombre} !!!`);
 console.log(`${nick}, tu compañero será ${starter.nombre} !!!`);
+
+
+
+
