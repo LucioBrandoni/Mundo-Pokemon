@@ -1,11 +1,8 @@
-// Funciones que crean o modifican elementos en el DOM
-
-
 import { starters } from "./data.js";
 
-// 🔹 Mostrar botones de selección de Pokémon inicial
+// Mostrar botones de selección de Pokémon inicial
 export function mostrarOpcionesPokemon(contenedor, callback) {
-  contenedor.innerHTML = ""; // Limpiamos el contenedor antes de mostrar
+  contenedor.innerHTML = ""; 
 
   starters.forEach((pokemon, index) => {
     const card = document.createElement("div");
@@ -33,7 +30,8 @@ export function mostrarOpcionesPokemon(contenedor, callback) {
 }
 
 
-// 🔹 Mostrar el resultado con la tarjeta del Pokémon elegido
+// Mostrar el resultado con la tarjeta del Pokémon elegido
+
 export function mostrarResultado(contenedorStats, contenedorMsg, nick, starter) {
   contenedorStats.innerHTML = `
     <div class="tarjeta" data-pokemon="${starter.nombre}">

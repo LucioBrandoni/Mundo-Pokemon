@@ -5,6 +5,7 @@ import { obtenerPokemonEnemigo, iniciarBatalla } from "./battle.js";
 import { starters } from "./data.js";
 
 // Referencias al DOM
+
 const formNickContainer = document.getElementById("formNickContainer");
 const formNick = document.getElementById("formNick");
 const nickInput = document.getElementById("nickInput");
@@ -17,20 +18,20 @@ const mensajeFinal = document.getElementById("mensajeFinal");
 let nick = obtenerDeStorage("nick") || "";
 let starter = obtenerDeStorage("starter") || null;
 
-// 🔹 Flujo inicial
+// Flujo inicial
+
 if (nick && starter) {
-  // Si hay datos guardados, mostrar resultado y reconstruir botones
     mostrarResultado(pokemonStats, mensajeFinal, nick, starter);
     resultadoContainer.style.display = "block";
     agregarBotonesFinales();
 } else {
-  // Si no hay datos, mostrar el formulario inicial
     formNickContainer.style.display = "block";
     pokemonContainer.style.display = "none";
     resultadoContainer.style.display = "none";
 }
 
-// 🔹 Evento: Ingreso de Nickname
+// Evento: Ingreso de Nickname
+
 formNick.addEventListener("submit", (e) => {
     e.preventDefault();
     nick = nickInput.value.trim();
@@ -52,7 +53,8 @@ formNick.addEventListener("submit", (e) => {
     }
 });
 
-// 🔹 Selección de Pokémon inicial
+// Selección de Pokémon inicial
+
 function seleccionarPokemon(index) {
     const elegido = starters[index];
     mostrarConfirmacion(`¿Querés elegir a ${elegido.nombre}?`, (confirmado) => {
@@ -67,7 +69,8 @@ function seleccionarPokemon(index) {
     });
 }
 
-// 🔹 Botones finales (Volver al inicio / Comenzar desafío)
+// Botones finales (Volver al inicio / Comenzar desafío)
+
 function agregarBotonesFinales() {
   // Evitar duplicados al recargar
     const existente = resultadoContainer.querySelector(".botonera-final");
@@ -102,7 +105,8 @@ function agregarBotonesFinales() {
     resultadoContainer.appendChild(btnContainer);
     }
 
-// 🔹 Lógica del desafío con PokeAPI
+// Combates utilizando PokeAPI
+
 async function iniciarDesafio() {
     mostrarAlerta("Buscando un oponente...", "info");
 

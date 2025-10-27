@@ -1,4 +1,4 @@
-// Datos base: Pokémon iniciales
+// Datos de Pokémon iniciales
 
 export const starters = [
   { nombre: "Bulbasaur", tipo: "Planta/Veneno", vida: 45, ataque: 49, imagen: "assets/bulbasaur.png" },

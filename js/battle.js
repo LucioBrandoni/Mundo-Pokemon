@@ -1,8 +1,7 @@
-  
-
     import { mostrarAlerta } from "./ui.js";
 
-    // 🔹 Trae un Pokémon aleatorio desde la API
+    // Trae un Pokémon aleatorio desde la API
+
     export async function obtenerPokemonEnemigo() {
     try {
         const idRandom = Math.floor(Math.random() * 151) + 1;
@@ -18,7 +17,7 @@
             (data.sprites?.front_default && await validateImage(data.sprites.front_default)) ||
             (data.sprites?.other?.["official-artwork"]?.front_default && await validateImage(data.sprites.other["official-artwork"].front_default)) ||
             (data.sprites?.other?.dream_world?.front_default && await validateImage(data.sprites.other.dream_world.front_default)) ||
-            "/assets/pokeball.png";
+            "/assets/pokeball.png";  // Imagen por defecto si no se encuentra ninguna
     
         return {
             nombre: data.name.charAt(0).toUpperCase() + data.name.slice(1),
@@ -52,7 +51,8 @@
     }
 
 
-    // 🔹 Simula el combate simple
+    // Combate simple
+
     export function iniciarBatalla(jugador, enemigo) {
     const ataqueJugador = jugador.ataque + Math.floor(Math.random() * 10);
     const ataqueEnemigo = enemigo.ataque + Math.floor(Math.random() * 10);
@@ -66,7 +66,8 @@
         icono = "error";
     }
 
-    // 🔹 Mostrar batalla visual
+    // Mostrar batalla visual
+    
     Swal.fire({
         title: "⚔️ ¡Batalla Pokémon!",
         html: `

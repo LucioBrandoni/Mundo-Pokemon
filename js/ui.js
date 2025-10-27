@@ -1,5 +1,6 @@
 
-// Modales visuales con SweetAlert2
+// Funciones de interfaz usando SweetAlert2
+
 export function mostrarConfirmacion(texto, callback) {
   Swal.fire({
     title: "Confirmar",

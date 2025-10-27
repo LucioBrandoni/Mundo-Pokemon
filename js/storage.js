@@ -1,5 +1,4 @@
-// Funciones de almacenamiento local
-
+// Funciones para manejo del localStorage
 
 export function guardarEnStorage(clave, valor) {
   localStorage.setItem(clave, JSON.stringify(valor));
