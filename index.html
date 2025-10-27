@@ -1,49 +1,46 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mundo Pokémon - Entregas</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      background: #f4f4f4;
-      margin: 0;
-      padding: 0;
-    }
-    h1 {
-      margin: 20px 0;
-    }
-    .container {
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-      margin-top: 50px;
-    }
-    a {
-      display: inline-block;
-      padding: 15px 25px;
-      background: #ffcb05;
-      color: #2a75bb;
-      font-weight: bold;
-      text-decoration: none;
-      border-radius: 10px;
-      transition: 0.3s;
-    }
-    a:hover {
-      background: #2a75bb;
-      color: #fff;
-    }
-  </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Juego Pokémon</title>
+
+  <link rel="stylesheet" href="css/styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
-  <h1>Mundo Pokémon</h1>
-  <p>Selecciona la entrega que quieras ver:</p>
+  <main>
+    <!-- 🧾 Formulario de Nick -->
+    <section id="formNickContainer" style="display:none;">
+      <h2>¡Bienvenido al Mundo Pokémon!</h2>
+      <form id="formNick">
+        <label for="nickInput">¿Cual es tu nombre, entrenador?</label>
+        <input type="text" id="nickInput" placeholder="Tu nombre..." required />
+        <button type="submit">Comenzar aventura</button>
+      </form>
+    </section>
 
-  <div class="container">
-    <a href="Entrega1-Brandoni/">Entrega 1</a>
-    <a href="Entrega2-Brandoni/">Entrega 2</a>
-  </div>
+    <!-- ⚔️ Selección de Pokémon -->
+    <section id="pokemonContainer" style="display:none;">
+      <h2>Elige tu Pokémon inicial</h2>
+      <div id="starterButtons"></div>
+    </section>
+
+    <!-- 🧩 Resultado final -->
+    <section id="resultadoContainer" style="display:none;">
+      <div id="pokemonStats" class="tarjeta"></div>
+      <p id="mensajeFinal"></p>
+      <div class="botones-final">
+         <button id="btnVolver" style="display:none;">Volver al inicio</button>
+        <button id="btnDesafio" style="display:none;">Comenzar desafío</button>
+       
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="./js/main.js"></script>
 </body>
 </html>
+
+
+

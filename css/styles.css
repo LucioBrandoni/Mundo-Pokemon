@@ -1,0 +1,215 @@
+/* Importar fuente de estilo retro */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+/* Variables de colores Nintendo */
+:root {
+    --nintendo-red: #e60012;
+    --nintendo-dark: #1a1a1a;
+    --nintendo-gray: #7c7c7c;
+    --nintendo-light: #f0f0f0;
+    --pixel-border: 4px;
+    --pokemon-fire: #FF4422;
+    --pokemon-water: #3399FF;
+    --pokemon-grass: #33CC33;
+}
+
+body {
+    background-color: var(--nintendo-dark);
+    font-family: 'Press Start 2P', cursive;
+    text-align: center;
+    margin: 0;
+    padding: 20px;
+    color: var(--nintendo-light);
+    line-height: 1.6;
+}
+
+h2 {
+    color: var(--nintendo-light);
+    text-shadow: 2px 2px 0 var(--nintendo-dark);
+    margin-bottom: 30px;
+}
+
+/* Estilo de contenedor principal tipo consola */
+form {
+    background-color: var(--nintendo-gray);
+    padding: 20px;
+    border: var(--pixel-border) solid var(--nintendo-light);
+    box-shadow: 
+        inset -4px -4px 0 0 rgba(0,0,0,0.3),
+        4px 4px 0 0 rgba(255,255,255,0.2);
+    display: inline-block;
+    margin: 20px;
+    image-rendering: pixelated;
+}
+
+input {
+    font-family: 'Press Start 2P', cursive;
+    margin: 10px;
+    padding: 8px;
+    background: var(--nintendo-light);
+    border: var(--pixel-border) solid var(--nintendo-dark);
+    outline: none;
+}
+
+button {
+    font-family: 'Press Start 2P', cursive;
+    background-color: var(--nintendo-red);
+    color: var(--nintendo-light);
+    border: var(--pixel-border) solid var(--nintendo-light);
+    padding: 15px 25px;
+    margin: 10px;
+    cursor: pointer;
+    transition: all 0.1s ease;
+    text-transform: uppercase;
+    box-shadow: 
+        inset -4px -4px 0 0 rgba(0,0,0,0.3),
+        4px 4px 0 0 rgba(255,255,255,0.2);
+}
+
+button:hover {
+    transform: scale(1.02);
+    box-shadow: 
+        inset -2px -2px 0 0 rgba(0,0,0,0.3),
+        2px 2px 0 0 rgba(255,255,255,0.2);
+}
+
+button:active {
+    transform: scale(0.98);
+    box-shadow: none;
+}
+
+.tarjeta {
+    background: var(--nintendo-gray);
+    border: var(--pixel-border) solid var(--nintendo-light);
+    padding: 20px;
+    box-shadow: 
+        inset -4px -4px 0 0 rgba(0,0,0,0.3),
+        4px 4px 0 0 rgba(255,255,255,0.2);
+    margin-top: 20px;
+    image-rendering: pixelated;
+}
+
+.botones-final {
+    margin-top: 15px;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+#starterButtons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
+.pokemon-card {
+    background-color: var(--nintendo-gray);
+    border: var(--pixel-border) solid var(--nintendo-light);
+    padding: 20px;
+    text-align: center;
+    width: 200px;
+    transition: transform 0.2s ease;
+    box-shadow: 
+        inset -4px -4px 0 0 rgba(0,0,0,0.3),
+        4px 4px 0 0 rgba(255,255,255,0.2);
+    image-rendering: pixelated;
+}
+
+.pokemon-card:hover {
+    transform: scale(1.05);
+    box-shadow: 
+        inset -2px -2px 0 0 rgba(0,0,0,0.3),
+        6px 6px 0 0 rgba(255,255,255,0.2);
+}
+
+.pokemon-card img {
+    margin-bottom: 15px;
+    image-rendering: pixelated;
+    width: 120px;
+    height: 120px;
+    object-fit: contain;
+}
+
+.mensaje-final {
+    font-weight: bold;
+    font-size: 0.8rem;
+    color: var(--nintendo-light);
+    background: var(--nintendo-dark);
+    padding: 15px;
+    border: var(--pixel-border) solid var(--nintendo-light);
+    margin-top: 15px;
+    box-shadow: 
+        inset -4px -4px 0 0 rgba(0,0,0,0.3),
+        4px 4px 0 0 rgba(255,255,255,0.2);
+}
+
+/* Estilos para los botones grandes */
+#btnDesafio, #btnVolver {
+    font-size: 16px;
+    padding: 20px 30px;
+    background-color: var(--nintendo-red);
+    margin: 15px;
+}
+
+/* Animaciones retro */
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+.pokemon-card:hover img {
+    animation: blink 1s infinite;
+}
+
+/* Estilo para SweetAlert personalizado */
+.swal2-popup {
+    font-family: 'Press Start 2P', cursive !important;
+    background-color: var(--nintendo-gray) !important;
+    border: var(--pixel-border) solid var(--nintendo-light) !important;
+    color: var(--nintendo-light) !important;
+}
+
+.swal2-title {
+    color: var(--nintendo-light) !important;
+    text-shadow: 2px 2px 0 var(--nintendo-dark) !important;
+}
+
+.swal2-html-container {
+    color: var(--nintendo-light) !important;
+}
+
+.pokemon-card strong {
+    color: var(--nintendo-light) !important;
+}
+
+.swal2-confirm {
+    background-color: var(--nintendo-red) !important;
+    font-family: 'Press Start 2P', cursive !important;
+    border: var(--pixel-border) solid var(--nintendo-light) !important;
+}
+
+/* Colores específicos para cada Pokémon */
+.pokemon-card[data-pokemon] p:first-of-type {
+    font-size: 1.1rem;
+    margin: 15px 5px;
+}
+
+.pokemon-card[data-pokemon="Charmander"] p:first-of-type,
+.tarjeta[data-pokemon="Charmander"] h2 {
+    color: var(--pokemon-fire);
+    text-shadow: 1px 1px 0 rgba(0,0,0,0.3);
+}
+
+.pokemon-card[data-pokemon="Squirtle"] p:first-of-type,
+.tarjeta[data-pokemon="Squirtle"] h2 {
+    color: var(--pokemon-water);
+    text-shadow: 1px 1px 0 rgba(0,0,0,0.3);
+}
+
+.pokemon-card[data-pokemon="Bulbasaur"] p:first-of-type,
+.tarjeta[data-pokemon="Bulbasaur"] h2 {
+    color: var(--pokemon-grass);
+    text-shadow: 1px 1px 0 rgba(0,0,0,0.3);
+}
