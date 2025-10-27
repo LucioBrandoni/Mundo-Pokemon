@@ -32,7 +32,7 @@
         // Retornar un Pokémon con valores por defecto en caso de error
         return {
             nombre: "Pokémon Desconocido",
-            imagen: "/assets/pokeball.png",
+            imagen: "assets/pokeball.png",
             ataque: 50,
             vida: 50
         };
