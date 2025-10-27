@@ -17,7 +17,7 @@
             (data.sprites?.front_default && await validateImage(data.sprites.front_default)) ||
             (data.sprites?.other?.["official-artwork"]?.front_default && await validateImage(data.sprites.other["official-artwork"].front_default)) ||
             (data.sprites?.other?.dream_world?.front_default && await validateImage(data.sprites.other.dream_world.front_default)) ||
-            "/assets/pokeball.png";  // Imagen por defecto si no se encuentra ninguna
+            "/Mundo-Pokemon/assets/pokeball.png";  // Imagen por defecto si no se encuentra ninguna
     
         return {
             nombre: data.name.charAt(0).toUpperCase() + data.name.slice(1),
@@ -67,7 +67,7 @@
     }
 
     // Mostrar batalla visual
-    
+
     Swal.fire({
         title: "⚔️ ¡Batalla Pokémon!",
         html: `
