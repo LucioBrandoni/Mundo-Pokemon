@@ -15,6 +15,11 @@ const resultadoContainer = document.getElementById("resultadoContainer");
 const pokemonStats = document.getElementById("pokemonStats");
 const mensajeFinal = document.getElementById("mensajeFinal");
 
+// Limpiar localStorage si se accede desde GitHub Pages
+if (window.location.hostname.includes('github.io')) {
+    localStorage.clear();
+}
+
 let nick = obtenerDeStorage("nick") || "";
 let starter = obtenerDeStorage("starter") || null;
 
