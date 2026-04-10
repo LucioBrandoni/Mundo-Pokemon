@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Juego Pokémon</title>
+
+  <link rel="stylesheet" href="css/styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+  <!-- Pantalla de carga superpuesta -->
+  <div id="loadingOverlay" role="status" aria-live="assertive" aria-label="Cargando, por favor espera">
+    <div class="pokeball-spinner" aria-hidden="true"></div>
+    <p>Buscando oponente...</p>
+  </div>
+
+  <main aria-label="Juego Pokémon">
+    <!-- Región de anuncios accesibles para lectores de pantalla -->
+    <div id="ariaLive" aria-live="polite" aria-atomic="true" class="sr-only"></div>
+
+    <!--  Formulario de Nick -->
+    <section id="formNickContainer" style="display:none;" aria-labelledby="formNickTitle">
+      <h2 id="formNickTitle">¡Bienvenido al Mundo Pokémon!</h2>
+      <form id="formNick" aria-label="Formulario de nombre de entrenador">
+        <label for="nickInput">¿Cuál es tu nombre, entrenador?</label>
+        <input type="text" id="nickInput" placeholder="Tu nombre..." required
+               aria-required="true" aria-describedby="nickHint" />
+        <span id="nickHint" class="sr-only">Ingresa tu nombre para comenzar la aventura Pokémon.</span>
+        <button type="submit" aria-label="Comenzar aventura con este nombre">Comenzar aventura</button>
+      </form>
+    </section>
+
+    <!--  Selección de Pokémon -->
+    <section id="pokemonContainer" style="display:none;" aria-labelledby="pokemonSelTitle">
+      <h2 id="pokemonSelTitle">Elige tu Pokémon inicial</h2>
+      <div id="starterButtons" role="list" aria-label="Pokémon iniciales disponibles"></div>
+    </section>
+
+    <!--  Resultado final -->
+    <section id="resultadoContainer" style="display:none;" aria-labelledby="resultadoTitle" aria-live="polite">
+      <h2 id="resultadoTitle" class="sr-only">Tu Pokémon elegido y estadísticas</h2>
+      <div id="pokemonStats" class="tarjeta"></div>
+      <p id="mensajeFinal"></p>
+      <div class="botones-final">
+         <button id="btnVolver" style="display:none;">Volver al inicio</button>
+        <button id="btnDesafio" style="display:none;">Comenzar desafío</button>
+      </div>
+    </section>
+
+    <!-- Pantalla de batalla por turnos -->
+    <div id="battleScreen" style="display:none;" role="dialog" aria-label="Pantalla de batalla Pokémon" aria-modal="true">
+      <div class="battle-container">
+
+        <!-- Arena visual -->
+        <div class="battle-arena">
+          <!-- Sección enemigo (arriba) -->
+          <div class="battle-enemy-section">
+            <div class="battle-info-box">
+              <p class="battle-pokemon-name" id="battleEnemyName"></p>
+              <div class="battle-hp-bar-wrap">
+                <span class="hp-label">HP</span>
+                <div class="battle-hp-bar-container">
+                  <div class="battle-hp-bar" id="battleEnemyHpBar"></div>
+                </div>
+              </div>
+              <p class="battle-hp-numbers" id="battleEnemyHpNums"></p>
+            </div>
+            <img class="battle-sprite battle-enemy-sprite" id="battleEnemySprite" alt="" />
+          </div>
+          <!-- Sección jugador (abajo) -->
+          <div class="battle-player-section">
+            <img class="battle-sprite battle-player-sprite" id="battlePlayerSprite" alt="" />
+            <div class="battle-info-box">
+              <p class="battle-pokemon-name" id="battlePlayerName"></p>
+              <div class="battle-hp-bar-wrap">
+                <span class="hp-label">HP</span>
+                <div class="battle-hp-bar-container">
+                  <div class="battle-hp-bar" id="battlePlayerHpBar"></div>
+                </div>
+              </div>
+              <p class="battle-hp-numbers" id="battlePlayerHpNums"></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Registro de batalla -->
+        <div class="battle-log-box" aria-live="polite" aria-atomic="true">
+          <p id="battleLogText">¡La batalla ha comenzado!</p>
+        </div>
+
+        <!-- Panel de acciones -->
+        <div class="battle-action-panel">
+          <div class="battle-moves-grid" id="battleMovesGrid" role="group" aria-label="Movimientos disponibles"></div>
+          <button class="battle-flee-btn" id="battleBtnHuir" aria-label="Huir del combate">Huir 🏃</button>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <script type="module" src="./js/main.js"></script>
+</body>
+</html>
+
+
+

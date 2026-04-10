@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 320" width="220" height="320">
+  <!-- Background -->
+  <rect width="220" height="320" fill="#FFF3CD" rx="18"/>
+
+  <!-- ===== PIKACHU ===== -->
+
+  <!-- Tail (lightning bolt) behind body -->
+  <polygon points="170,260 185,240 175,230 195,200 180,210 190,185 165,215 178,208 162,240 172,230"
+           fill="#F5C518" stroke="#C8A000" stroke-width="1.5"/>
+
+  <!-- Body -->
+  <ellipse cx="105" cy="235" rx="62" ry="55" fill="#F5C518"/>
+  <!-- Belly patch -->
+  <ellipse cx="105" cy="248" rx="38" ry="30" fill="#F0D080"/>
+
+  <!-- Brown back stripes -->
+  <path d="M 68 185 Q 72 175 80 178" stroke="#8B5E00" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M 75 172 Q 80 162 89 165" stroke="#8B5E00" stroke-width="3" fill="none" stroke-linecap="round"/>
+
+  <!-- Left ear (Pikachu pointy ear) -->
+  <polygon points="62,105 44,28 76,100" fill="#F5C518"/>
+  <!-- Black tip left ear -->
+  <polygon points="62,105 44,28 53,72" fill="#1A1A1A"/>
+
+  <!-- Right ear -->
+  <polygon points="148,105 166,28 134,100" fill="#F5C518"/>
+  <!-- Black tip right ear -->
+  <polygon points="148,105 166,28 157,72" fill="#1A1A1A"/>
+
+  <!-- Head -->
+  <ellipse cx="105" cy="138" rx="66" ry="60" fill="#F5C518"/>
+
+  <!-- Eyes -->
+  <circle cx="82" cy="122" r="14" fill="#1A1A1A"/>
+  <circle cx="128" cy="122" r="14" fill="#1A1A1A"/>
+  <!-- Eye highlights -->
+  <circle cx="87" cy="116" r="5" fill="white"/>
+  <circle cx="133" cy="116" r="5" fill="white"/>
+  <!-- Angry eyebrows -->
+  <line x1="70" y1="106" x2="90" y2="112" stroke="#1A1A1A" stroke-width="4" stroke-linecap="round"/>
+  <line x1="140" y1="106" x2="120" y2="112" stroke="#1A1A1A" stroke-width="4" stroke-linecap="round"/>
+
+  <!-- Red cheeks -->
+  <ellipse cx="60" cy="145" rx="16" ry="12" fill="#E8403A" opacity="0.85"/>
+  <ellipse cx="150" cy="145" rx="16" ry="12" fill="#E8403A" opacity="0.85"/>
+
+  <!-- Nose -->
+  <ellipse cx="105" cy="140" rx="5" ry="3.5" fill="#1A1A1A"/>
+
+  <!-- Mouth (angry expression) -->
+  <path d="M 88 155 Q 105 148 122 155" stroke="#1A1A1A" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+
+  <!-- ===== LEFT ARM (raised, middle finger) ===== -->
+  <!-- Upper arm -->
+  <rect x="152" y="188" width="20" height="44" rx="10" fill="#F5C518"/>
+  <!-- Fist / palm -->
+  <rect x="148" y="170" width="28" height="26" rx="9" fill="#F5C518"/>
+  <!-- Middle finger (standing up) -->
+  <rect x="158" y="136" width="13" height="40" rx="6" fill="#F5C518"/>
+  <!-- Fingernail highlight -->
+  <rect x="159" y="137" width="11" height="10" rx="4" fill="#D4A800"/>
+  <!-- Folded fingers bump left -->
+  <rect x="148" y="175" width="10" height="13" rx="5" fill="#D4A800"/>
+  <!-- Folded fingers bump right -->
+  <rect x="170" y="175" width="10" height="13" rx="5" fill="#D4A800"/>
+
+  <!-- Right arm hanging -->
+  <rect x="42" y="195" width="18" height="40" rx="9" fill="#F5C518"/>
+  <!-- Right hand -->
+  <ellipse cx="51" cy="242" rx="11" ry="10" fill="#F5C518"/>
+
+  <!-- Legs -->
+  <rect x="74" y="276" width="22" height="28" rx="10" fill="#F5C518"/>
+  <rect x="112" y="276" width="22" height="28" rx="10" fill="#F5C518"/>
+  <!-- Feet -->
+  <ellipse cx="85" cy="305" rx="16" ry="9" fill="#C8A000"/>
+  <ellipse cx="123" cy="305" rx="16" ry="9" fill="#C8A000"/>
+
+  <!-- Warning label -->
+  <rect x="10" y="310" width="200" height="6" rx="3" fill="#C0392B"/>
+  <rect x="8" y="308" width="204" height="14" rx="5" fill="#C0392B"/>
+  <text x="110" y="319" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="white" font-weight="bold">¡TRAMPA DETECTADA!</text>
+</svg>

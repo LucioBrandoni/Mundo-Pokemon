@@ -1,0 +1,718 @@
+/* Importar fuente de estilo retro */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+/* Variables de colores Nintendo */
+:root {
+    --nintendo-red: #e60012;
+    --nintendo-dark: #1a1a1a;
+    --nintendo-gray: #7c7c7c;
+    --nintendo-light: #f0f0f0;
+    --pixel-border: 4px;
+    --pokemon-fire: #FF4422;
+    --pokemon-water: #3399FF;
+    --pokemon-grass: #33CC33;
+}
+
+body {
+    background-color: var(--nintendo-dark);
+    font-family: 'Press Start 2P', cursive;
+    text-align: center;
+    margin: 0;
+    padding: 20px;
+    color: var(--nintendo-light);
+    line-height: 1.6;
+}
+
+h2 {
+    color: var(--nintendo-light);
+    text-shadow: 2px 2px 0 var(--nintendo-dark);
+    margin-bottom: 30px;
+}
+
+/* Estilo de contenedor principal tipo consola */
+form {
+    background-color: var(--nintendo-gray);
+    padding: 20px;
+    border: var(--pixel-border) solid var(--nintendo-light);
+    box-shadow: 
+        inset -4px -4px 0 0 rgba(0,0,0,0.3),
+        4px 4px 0 0 rgba(255,255,255,0.2);
+    display: inline-block;
+    margin: 20px;
+    image-rendering: pixelated;
+}
+
+input {
+    font-family: 'Press Start 2P', cursive;
+    margin: 10px;
+    padding: 8px;
+    background: var(--nintendo-light);
+    border: var(--pixel-border) solid var(--nintendo-dark);
+    outline: none;
+}
+
+button {
+    font-family: 'Press Start 2P', cursive;
+    background-color: var(--nintendo-red);
+    color: var(--nintendo-light);
+    border: var(--pixel-border) solid var(--nintendo-light);
+    padding: 15px 25px;
+    margin: 10px;
+    cursor: pointer;
+    transition: all 0.1s ease;
+    text-transform: uppercase;
+    box-shadow: 
+        inset -4px -4px 0 0 rgba(0,0,0,0.3),
+        4px 4px 0 0 rgba(255,255,255,0.2);
+}
+
+button:hover {
+    transform: scale(1.02);
+    box-shadow: 
+        inset -2px -2px 0 0 rgba(0,0,0,0.3),
+        2px 2px 0 0 rgba(255,255,255,0.2);
+}
+
+button:active {
+    transform: scale(0.98);
+    box-shadow: none;
+}
+
+.tarjeta {
+    background: var(--nintendo-gray);
+    border: var(--pixel-border) solid var(--nintendo-light);
+    padding: 20px;
+    box-shadow: 
+        inset -4px -4px 0 0 rgba(0,0,0,0.3),
+        4px 4px 0 0 rgba(255,255,255,0.2);
+    margin-top: 20px;
+    image-rendering: pixelated;
+}
+
+.botones-final {
+    margin-top: 15px;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+#starterButtons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
+.pokemon-card {
+    background-color: var(--nintendo-gray);
+    border: var(--pixel-border) solid var(--nintendo-light);
+    padding: 20px;
+    text-align: center;
+    width: 200px;
+    transition: transform 0.2s ease;
+    box-shadow: 
+        inset -4px -4px 0 0 rgba(0,0,0,0.3),
+        4px 4px 0 0 rgba(255,255,255,0.2);
+    image-rendering: pixelated;
+}
+
+.pokemon-card:hover {
+    transform: scale(1.05);
+    box-shadow: 
+        inset -2px -2px 0 0 rgba(0,0,0,0.3),
+        6px 6px 0 0 rgba(255,255,255,0.2);
+}
+
+.pokemon-card img {
+    margin-bottom: 15px;
+    image-rendering: pixelated;
+    width: 120px;
+    height: 120px;
+    object-fit: contain;
+}
+
+.mensaje-final {
+    font-weight: bold;
+    font-size: 0.8rem;
+    color: var(--nintendo-light);
+    background: var(--nintendo-dark);
+    padding: 15px;
+    border: var(--pixel-border) solid var(--nintendo-light);
+    margin-top: 15px;
+    box-shadow: 
+        inset -4px -4px 0 0 rgba(0,0,0,0.3),
+        4px 4px 0 0 rgba(255,255,255,0.2);
+}
+
+/* Estilos para los botones grandes */
+#btnDesafio, #btnVolver {
+    font-size: 16px;
+    padding: 20px 30px;
+    background-color: var(--nintendo-red);
+    margin: 15px;
+}
+
+/* ============================================================
+   Animaciones y transiciones
+   ============================================================ */
+
+/* Fade-in — usado al mostrar la tarjeta de resultado */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-12px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+    animation: fadeIn 0.45s ease forwards;
+}
+
+/* Slide-in-up — transición de entrada para cada sección */
+@keyframes slideInUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.slide-in-up {
+    animation: slideInUp 0.4s ease forwards;
+}
+
+/* Entrada escalonada para las cartas de Pokémon */
+@keyframes pokemonCardEnter {
+    from { opacity: 0; transform: scale(0.75) translateY(20px); }
+    to   { opacity: 1; transform: scale(1)    translateY(0); }
+}
+
+.pokemon-card-enter {
+    opacity: 0;
+    animation: pokemonCardEnter 0.4s ease forwards;
+}
+
+/* Flash retro al seleccionar un Pokémon */
+@keyframes selectionFlash {
+    0%   { filter: brightness(1); }
+    25%  { filter: brightness(2.5) saturate(2); }
+    60%  { filter: brightness(0.4); }
+    100% { filter: brightness(1); }
+}
+
+.selection-flash {
+    animation: selectionFlash 0.5s ease;
+}
+
+/* Shake para el Pokémon perdedor en combate */
+@keyframes battleShake {
+    0%, 100% { transform: translateX(0); }
+    15%      { transform: translateX(-10px); }
+    35%      { transform: translateX(10px); }
+    55%      { transform: translateX(-7px); }
+    75%      { transform: translateX(7px); }
+}
+
+.battle-shake {
+    animation: battleShake 0.55s ease;
+}
+
+/* Brillo dorado para el Pokémon ganador en combate */
+@keyframes battleWinner {
+    0%   { filter: brightness(1); }
+    40%  { filter: brightness(1.6) drop-shadow(0 0 8px gold); }
+    100% { filter: brightness(1); }
+}
+
+.battle-winner {
+    animation: battleWinner 0.9s ease 2;
+}
+
+/* Animación de ataque: crece hasta llenar la pantalla y vuelve */
+@keyframes battleAttackGrow {
+    0%   { transform: scale(1);    filter: brightness(1); }
+    25%  { transform: scale(1.35); filter: brightness(4); }
+    55%  { transform: scale(1.15); filter: brightness(2); }
+    100% { transform: scale(1);    filter: brightness(1); }
+}
+
+.battle-attack {
+    animation: battleAttackGrow 0.8s ease;
+    position: relative;
+    z-index: 100;
+}
+
+/* Rebote retro al hacer hover sobre las cartas */
+@keyframes retroBounce {
+    0%, 100% { transform: translateY(0); }
+    30%      { transform: translateY(-8px); }
+    60%      { transform: translateY(-4px); }
+}
+
+.pokemon-card:hover img {
+    animation: retroBounce 0.6s ease infinite;
+}
+
+/* Estilo para SweetAlert personalizado */
+.swal2-popup {
+    font-family: 'Press Start 2P', cursive !important;
+    background-color: var(--nintendo-gray) !important;
+    border: var(--pixel-border) solid var(--nintendo-light) !important;
+    color: var(--nintendo-light) !important;
+}
+
+.swal2-title {
+    color: var(--nintendo-light) !important;
+    text-shadow: 2px 2px 0 var(--nintendo-dark) !important;
+}
+
+.swal2-html-container {
+    color: var(--nintendo-light) !important;
+}
+
+.pokemon-card strong {
+    color: var(--nintendo-light) !important;
+}
+
+.swal2-confirm {
+    background-color: var(--nintendo-red) !important;
+    font-family: 'Press Start 2P', cursive !important;
+    border: var(--pixel-border) solid var(--nintendo-light) !important;
+}
+
+/* Colores específicos para cada Pokémon */
+.pokemon-card[data-pokemon] p:first-of-type {
+    font-size: 1.1rem;
+    margin: 15px 5px;
+}
+
+.pokemon-card[data-pokemon="Charmander"] p:first-of-type,
+.tarjeta[data-pokemon="Charmander"] h2 {
+    color: var(--pokemon-fire);
+    text-shadow: 1px 1px 0 rgba(0,0,0,0.3);
+}
+
+.pokemon-card[data-pokemon="Squirtle"] p:first-of-type,
+.tarjeta[data-pokemon="Squirtle"] h2 {
+    color: var(--pokemon-water);
+    text-shadow: 1px 1px 0 rgba(0,0,0,0.3);
+}
+
+.pokemon-card[data-pokemon="Bulbasaur"] p:first-of-type,
+.tarjeta[data-pokemon="Bulbasaur"] h2 {
+    color: var(--pokemon-grass);
+    text-shadow: 1px 1px 0 rgba(0,0,0,0.3);
+}
+
+/* Clase de utilidad para contenido visible solo para lectores de pantalla */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* Pantalla de carga superpuesta */
+#loadingOverlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(26, 26, 26, 0.85);
+    z-index: 9000;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+#loadingOverlay.visible {
+    display: flex;
+}
+
+#loadingOverlay p {
+    font-family: 'Press Start 2P', cursive;
+    color: var(--nintendo-light);
+    font-size: 0.75rem;
+    margin: 0;
+    animation: loadingPulse 1s ease-in-out infinite;
+}
+
+@keyframes loadingPulse {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.4; }
+}
+
+/* Pokébola giratoria para la pantalla de carga */
+.pokeball-spinner {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    border: 6px solid var(--nintendo-light);
+    border-top-color: var(--nintendo-red);
+    animation: spinPokeball 0.8s linear infinite;
+    image-rendering: pixelated;
+}
+
+@keyframes spinPokeball {
+    to { transform: rotate(360deg); }
+}
+
+/* Estadísticas de batalla */
+.battle-stats {
+    font-size: 0.6rem;
+    color: var(--nintendo-light);
+    background: var(--nintendo-dark);
+    padding: 10px;
+    border: var(--pixel-border) solid var(--nintendo-light);
+    margin-top: 12px;
+    box-shadow: 
+        inset -4px -4px 0 0 rgba(0,0,0,0.3),
+        4px 4px 0 0 rgba(255,255,255,0.2);
+}
+
+/* Historial de batallas */
+.historial {
+    margin-top: 16px;
+    text-align: left;
+}
+
+.historial-titulo {
+    font-size: 0.65rem;
+    text-align: center;
+    color: var(--nintendo-light);
+    margin-bottom: 8px;
+    text-shadow: 1px 1px 0 var(--nintendo-dark);
+}
+
+.historial-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    font-size: 0.5rem;
+    padding: 6px 10px;
+    margin-bottom: 4px;
+    border: 2px solid var(--nintendo-light);
+    box-shadow: inset -2px -2px 0 0 rgba(0,0,0,0.3), 2px 2px 0 0 rgba(255,255,255,0.2);
+}
+
+.historial-victoria {
+    background: rgba(0, 80, 0, 0.6);
+}
+
+.historial-derrota {
+    background: rgba(100, 0, 0, 0.6);
+}
+
+.historial-detalle {
+    color: #ccc;
+}
+
+.historial-fecha {
+    color: #aaa;
+    font-size: 0.45rem;
+}
+
+.badge-efectivo {
+    color: #FFD700;
+    font-size: 0.55rem;
+}
+
+/* Nivel y barra de experiencia */
+.nivel-xp {
+    margin-top: 12px;
+    background: var(--nintendo-dark);
+    border: var(--pixel-border) solid var(--nintendo-light);
+    padding: 10px;
+    box-shadow:
+        inset -4px -4px 0 0 rgba(0,0,0,0.3),
+        4px 4px 0 0 rgba(255,255,255,0.2);
+}
+
+.nivel-texto {
+    font-size: 0.65rem;
+    margin: 0 0 6px 0;
+    color: #FFD700;
+}
+
+.xp-bar-container {
+    background: #333;
+    border: 2px solid var(--nintendo-light);
+    height: 12px;
+    width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.xp-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #00cc44, #66ff88);
+    transition: width 0.4s ease;
+    image-rendering: pixelated;
+}
+
+.xp-texto {
+    font-size: 0.5rem;
+    color: #aaa;
+    margin: 4px 0 0 0;
+}
+
+/* ============================================================
+   Pantalla de batalla por turnos
+   ============================================================ */
+
+#battleScreen {
+    position: fixed;
+    inset: 0;
+    background: var(--nintendo-dark);
+    z-index: 9100;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    box-sizing: border-box;
+    overflow-y: auto;
+}
+
+.battle-container {
+    width: 100%;
+    max-width: 580px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.battle-arena {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: linear-gradient(180deg, #2a4a2a 0%, #1c1c1c 55%, #3a3020 100%);
+    border: var(--pixel-border) solid var(--nintendo-light);
+    padding: 16px;
+    box-shadow:
+        inset -4px -4px 0 0 rgba(0,0,0,0.3),
+        4px 4px 0 0 rgba(255,255,255,0.2);
+    min-height: 210px;
+}
+
+.battle-enemy-section {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+
+.battle-player-section {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+}
+
+.battle-info-box {
+    background: var(--nintendo-gray);
+    border: 3px solid var(--nintendo-light);
+    padding: 8px 12px;
+    min-width: 190px;
+    box-shadow: inset -2px -2px 0 rgba(0,0,0,0.3);
+}
+
+.battle-pokemon-name {
+    font-size: 0.55rem;
+    color: var(--nintendo-light);
+    margin: 0 0 6px 0;
+    text-transform: uppercase;
+}
+
+.battle-hp-bar-wrap {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 4px;
+}
+
+.hp-label {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.45rem;
+    color: var(--nintendo-light);
+    white-space: nowrap;
+}
+
+.battle-hp-bar-container {
+    flex: 1;
+    background: #333;
+    border: 2px solid var(--nintendo-light);
+    height: 10px;
+    overflow: hidden;
+}
+
+.battle-hp-bar {
+    height: 100%;
+    background: #00cc44;
+    transition: width 0.5s ease, background-color 0.5s ease;
+}
+
+.battle-hp-bar.hp-warning { background: #f8c000; }
+.battle-hp-bar.hp-danger  { background: #ee3333; }
+
+.battle-hp-numbers {
+    font-size: 0.4rem;
+    color: #aaa;
+    margin: 0;
+    text-align: right;
+}
+
+.battle-sprite {
+    width: 96px;
+    height: 96px;
+    object-fit: contain;
+    image-rendering: pixelated;
+}
+
+.battle-enemy-sprite { align-self: flex-start; }
+.battle-player-sprite { align-self: flex-end; }
+
+.battle-log-box {
+    background: var(--nintendo-gray);
+    border: var(--pixel-border) solid var(--nintendo-light);
+    padding: 12px 16px;
+    min-height: 56px;
+    display: flex;
+    align-items: center;
+    box-shadow:
+        inset -4px -4px 0 0 rgba(0,0,0,0.3),
+        4px 4px 0 0 rgba(255,255,255,0.2);
+}
+
+#battleLogText {
+    font-size: 0.5rem;
+    color: var(--nintendo-light);
+    margin: 0;
+    line-height: 1.9;
+}
+
+.battle-action-panel {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.battle-moves-grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.battle-move-btn {
+    font-family: 'Press Start 2P', cursive;
+    padding: 8px 10px;
+    border: 3px solid var(--nintendo-light);
+    border-left-width: 6px;
+    cursor: pointer;
+    background: var(--nintendo-dark);
+    color: var(--nintendo-light);
+    font-size: 0.42rem;
+    text-align: left;
+    line-height: 1.7;
+    box-shadow: inset -2px -2px 0 rgba(0,0,0,0.3);
+    transition: transform 0.1s, box-shadow 0.1s;
+}
+
+.battle-move-btn:hover:not(:disabled) {
+    transform: scale(1.04);
+    box-shadow: inset -1px -1px 0 rgba(0,0,0,0.3);
+}
+
+.battle-move-btn:disabled {
+    opacity: 0.38;
+    cursor: not-allowed;
+}
+
+.battle-move-type {
+    font-size: 0.38rem;
+    text-transform: uppercase;
+    opacity: 0.9;
+}
+
+.battle-move-pp {
+    font-size: 0.38rem;
+    color: #bbb;
+}
+
+.battle-move-power {
+    font-size: 0.38rem;
+    color: #eee;
+}
+
+.battle-flee-btn {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.45rem;
+    padding: 10px 14px;
+    background: #555;
+    color: var(--nintendo-light);
+    border: 3px solid var(--nintendo-light);
+    cursor: pointer;
+    white-space: nowrap;
+    box-shadow: inset -2px -2px 0 rgba(0,0,0,0.3);
+    transition: transform 0.1s;
+    align-self: stretch;
+    display: flex;
+    align-items: center;
+}
+
+.battle-flee-btn:hover:not(:disabled) {
+    transform: scale(1.04);
+}
+
+.battle-flee-btn:disabled {
+    opacity: 0.38;
+    cursor: not-allowed;
+}
+
+/* ============================================================
+   Logros (achievements)
+   ============================================================ */
+
+.logros-container {
+    margin-top: 16px;
+    background: var(--nintendo-dark);
+    border: var(--pixel-border) solid var(--nintendo-light);
+    padding: 10px;
+    box-shadow:
+        inset -4px -4px 0 0 rgba(0,0,0,0.3),
+        4px 4px 0 0 rgba(255,255,255,0.2);
+}
+
+.logros-titulo {
+    font-size: 0.6rem;
+    text-align: center;
+    color: #FFD700;
+    margin: 0 0 8px 0;
+    text-shadow: 1px 1px 0 var(--nintendo-dark);
+}
+
+.logros-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: center;
+}
+
+.logro-badge {
+    background: var(--nintendo-gray);
+    border: 2px solid #FFD700;
+    padding: 5px 8px;
+    font-size: 0.4rem;
+    color: var(--nintendo-light);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    box-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+    cursor: default;
+}
+
+.logro-badge span {
+    font-size: 0.38rem;
+}
