@@ -43,7 +43,7 @@ self.addEventListener('activate', (event) => {
 });
 
 function guardarEnCacheSiCorresponde(request, response) {
-  if (!response || (!response.ok && response.type !== 'opaque')) {
+  if (!response || (response.type !== 'opaque' && !response.ok)) {
     return response;
   }
 
@@ -65,7 +65,7 @@ async function responderAppShell(request) {
     if (request.mode === 'navigate') {
       return cache.match('./index.html');
     }
-    throw new Error('No hay respuesta en caché disponible.');
+    throw new Error(`No hay respuesta en caché disponible para ${request.url}.`);
   }
 }
 
@@ -78,7 +78,7 @@ async function responderRuntime(request) {
   } catch {
     const cacheado = await cache.match(request);
     if (cacheado) return cacheado;
-    throw new Error('No hay respuesta dinámica en caché disponible.');
+    throw new Error(`No hay respuesta dinámica en caché disponible para ${request.url}.`);
   }
 }
 

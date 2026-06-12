@@ -233,7 +233,7 @@
                 movimientos: obtenerMovimientosFallback(tiposApi),
                 imagenEspaldas: null,
                 usaFallback: true,
-                mensajeError: "No se pudieron cargar los movimientos reales desde la PokeAPI. Se usarán movimientos de reserva en esta batalla.",
+                mensajeError: "No se pudieron cargar los movimientos reales desde la PokeAPI. Revisá tu conexión: se usarán movimientos de reserva en esta batalla.",
             };
         }
     }
