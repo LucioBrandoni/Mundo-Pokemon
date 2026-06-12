@@ -137,6 +137,11 @@ function procesarExperiencia(gano) {
         subioNivel = true;
     }
 
+    // Recargar PP de los movimientos al subir de nivel
+    if (subioNivel && starter.movimientos) {
+        starter.movimientos = starter.movimientos.map(m => ({ ...m, ppActual: m.pp }));
+    }
+
     guardarEnStorage("starter", starter);
     return { xpGanada, subioNivel };
 }
@@ -288,6 +293,8 @@ function mostrarEvolucionSiCorresponde() {
             imagen:         evolucion.imagen,
             imagenEspaldas: evolucion.imagenEspaldas,
         });
+        // Limpiar movimientos guardados para que la forma evolucionada obtenga los suyos
+        delete starter.movimientos;
         guardarEnStorage("starter", starter);
         desbloquearLogroEvolucion();
         verificarLogros({ gano: true, victorias, starter, rachaActual, multEnemigo: 1 });
@@ -341,13 +348,22 @@ function mostrarDialogoBatalla(enemigo) {
     cancelButtonText: "Huir 🏃",
     }).then(async (result) => {
     if (result.isConfirmed) {
-        mostrarCarga("Preparando movimientos...");
-        const { movimientos, imagenEspaldas } = await obtenerMovimientosPokemon(starter.nombre, starter.tiposApi || []);
-        if (imagenEspaldas) starter.imagenEspaldas = imagenEspaldas;
-        ocultarCarga();
+        let movimientos;
+        if (starter.movimientos && starter.movimientos.length > 0) {
+            movimientos = starter.movimientos;
+        } else {
+            mostrarCarga("Preparando movimientos...");
+            const resultado = await obtenerMovimientosPokemon(starter.nombre, starter.tiposApi || []);
+            movimientos = resultado.movimientos;
+            if (resultado.imagenEspaldas) starter.imagenEspaldas = resultado.imagenEspaldas;
+            ocultarCarga();
+        }
         iniciarBatalla(starter, enemigo, movimientos, (gano, stats = {}) => {
+            // Persistir los PP consumidos durante la batalla
+            starter.movimientos = movimientos;
             // null significa que el jugador huyó durante la batalla
             if (gano === null) {
+                guardarEnStorage("starter", starter);
                 localStorage.removeItem("enemigoActual");
                 return;
             }
