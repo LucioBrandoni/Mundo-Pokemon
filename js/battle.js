@@ -445,7 +445,7 @@
             const opcionesItems = obtenerItemsUsables().filter(([clave]) => esItemAplicable(clave));
 
             if (opcionesItems.length === 0) {
-                mostrarAlerta(`${jugador.nombre} ya tiene la vida al máximo.`, "info");
+                mostrarAlerta("No hay ítems aplicables en este momento.", "info");
                 return;
             }
 
@@ -485,7 +485,7 @@
 
         function esItemAplicable(claveItem) {
             const item = ITEM_DEFINITIONS[claveItem];
-            if (!item || (inventario[claveItem] || 0) <= 0) return false;
+            if (!item) return false;
 
             const esItemDeCuracion = typeof item.curacion === "number" && item.curacion > 0;
             return !esItemDeCuracion || hpJugador < hpMaxJugador;
@@ -551,7 +551,7 @@
 
         function usarItemTurno(claveItem) {
             const item = ITEM_DEFINITIONS[claveItem];
-            if (!item || !esItemAplicable(claveItem)) return;
+            if (!item || (inventario[claveItem] || 0) <= 0 || !esItemAplicable(claveItem)) return;
 
             bloquear();
             inventario[claveItem] = Math.max(0, (inventario[claveItem] || 0) - 1);
