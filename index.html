@@ -6,9 +6,22 @@
   <title>Juego Pokémon</title>
 
   <link rel="stylesheet" href="css/styles.css" />
+  <script>
+    /* Aplica el tema guardado antes de renderizar para evitar parpadeo */
+    (function () {
+      var t = localStorage.getItem('theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', t);
+    }());
+  </script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
+  <!-- Barra de ajustes: tema claro/oscuro y sonido -->
+  <div class="settings-bar" role="toolbar" aria-label="Ajustes">
+    <button id="btnTheme" class="settings-btn" title="Cambiar tema" aria-label="Cambiar tema claro/oscuro">🌙</button>
+    <button id="btnSound" class="settings-btn" title="Silenciar/activar sonidos" aria-label="Silenciar o activar sonidos">🔊</button>
+  </div>
+
   <!-- Pantalla de carga superpuesta -->
   <div id="loadingOverlay" role="status" aria-live="assertive" aria-label="Cargando, por favor espera">
     <div class="pokeball-spinner" aria-hidden="true"></div>

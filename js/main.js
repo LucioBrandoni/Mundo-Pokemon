@@ -4,6 +4,7 @@ import { mostrarConfirmacion, mostrarAlerta } from "./ui.js";
 import { obtenerPokemonEnemigo, iniciarBatalla, obtenerMovimientosPokemon } from "./battle.js";
 import { starters, nextEvolution, INITIAL_INVENTORY, ITEM_DEFINITIONS, RIVAL_STARTERS, RIVAL_TRAINER_NAME, RIVAL_INTERVALO, obtenerCadenaEvolutiva, obtenerDatosPokemon, obtenerBaseCadena, esFormaFinal } from "./data.js";
 import { verificarLogros, desbloquearLogroEvolucion, desbloquearLogroCazadorLeyendas, obtenerColeccionistaBases, guardarColeccionistaBases, mostrarPantallaLogros } from "./achievements.js";
+import { playEvolutionSound, toggleMute, isMuted } from "./audio.js";
 
 // Referencias al DOM
 
@@ -17,6 +18,41 @@ const pokemonStats = document.getElementById("pokemonStats");
 const mensajeFinal = document.getElementById("mensajeFinal");
 const loadingOverlay = document.getElementById("loadingOverlay");
 const ariaLive = document.getElementById("ariaLive");
+
+// ============================================================
+// Ajustes: tema claro/oscuro y sonido
+// ============================================================
+
+const btnTheme = document.getElementById("btnTheme");
+const btnSound = document.getElementById("btnSound");
+
+function aplicarIconoTema() {
+    const tema = document.documentElement.getAttribute('data-theme') || 'dark';
+    btnTheme.textContent = tema === 'light' ? '🌙' : '☀️';
+    btnTheme.setAttribute('aria-label', tema === 'light' ? 'Cambiar a tema oscuro' : 'Cambiar a tema claro');
+}
+
+function aplicarIconoSonido() {
+    btnSound.textContent = isMuted() ? '🔇' : '🔊';
+    btnSound.setAttribute('aria-label', isMuted() ? 'Activar sonidos' : 'Silenciar sonidos');
+}
+
+btnTheme.addEventListener('click', () => {
+    const actual = document.documentElement.getAttribute('data-theme') || 'dark';
+    const nuevo  = actual === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', nuevo);
+    localStorage.setItem('theme', nuevo);
+    aplicarIconoTema();
+});
+
+btnSound.addEventListener('click', () => {
+    toggleMute();
+    aplicarIconoSonido();
+});
+
+// Inicializar iconos al cargar
+aplicarIconoTema();
+aplicarIconoSonido();
 
 // Anuncia un mensaje a los lectores de pantalla sin mostrarlo visualmente
 function anunciarAccesible(texto) {
@@ -453,6 +489,7 @@ function mostrarEvolucionSiCorresponde() {
         // Limpiar movimientos guardados para que la forma evolucionada obtenga los suyos
         delete starter.movimientos;
         guardarEnStorage("starter", starter);
+        playEvolutionSound();
         desbloquearLogroEvolucion();
         verificarLogros({ gano: true, victorias, derrotas, starter, rachaActual, multEnemigo: 1 });
         const historial = obtenerHistorial();
