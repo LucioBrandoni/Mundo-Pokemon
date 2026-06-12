@@ -2,7 +2,7 @@ import { guardarEnStorage, obtenerDeStorage, guardarBatalla, obtenerHistorial } 
 import { mostrarOpcionesPokemon, mostrarResultado } from "./dom.js";
 import { mostrarConfirmacion, mostrarAlerta } from "./ui.js";
 import { obtenerPokemonEnemigo, iniciarBatalla, obtenerMovimientosPokemon } from "./battle.js";
-import { starters, nextEvolution, INITIAL_INVENTORY, ITEM_DEFINITIONS, RIVAL_STARTERS, RIVAL_TRAINER_NAME, obtenerCadenaEvolutiva, obtenerDatosPokemon, obtenerBaseCadena, esFormaFinal } from "./data.js";
+import { starters, nextEvolution, INITIAL_INVENTORY, ITEM_DEFINITIONS, RIVAL_STARTERS, RIVAL_TRAINER_NAME, RIVAL_INTERVALO, obtenerCadenaEvolutiva, obtenerDatosPokemon, obtenerBaseCadena, esFormaFinal } from "./data.js";
 import { verificarLogros, desbloquearLogroEvolucion } from "./achievements.js";
 
 // Referencias al DOM
@@ -127,14 +127,22 @@ const XP_VICTORIA  = 50;
 const XP_DERROTA   = 15;
 const XP_POR_NIVEL = 100;
 const NIVEL_INICIAL = 5;
-const RIVAL_INTERVALO = 10;
+const RIVAL_BONUS_NIVEL = 2;
+const RIVAL_BONUS_HITO = 0.12;
+const RIVAL_BONUS_EVOLUCION = 0.08;
+const RECOMPENSA_SUPER_POTION_NIVEL_FINAL = 40;
+const RECOMPENSA_SUPER_POTION_CADA = 4;
+const RECOMPENSA_SUPER_POTION_NIVEL = 28;
+
+function normalizarContadorItem(valor, valorPorDefecto) {
+    const numero = parseInt(valor, 10);
+    return Number.isNaN(numero) ? valorPorDefecto : Math.max(0, numero);
+}
 
 function normalizarInventario(inventarioGuardado) {
-    const potions = Number.parseInt(inventarioGuardado?.potion, 10);
-    const superPotions = Number.parseInt(inventarioGuardado?.superPotion, 10);
     return {
-        potion: Number.isNaN(potions) ? INITIAL_INVENTORY.potion : Math.max(0, potions),
-        superPotion: Number.isNaN(superPotions) ? INITIAL_INVENTORY.superPotion : Math.max(0, superPotions),
+        potion: normalizarContadorItem(inventarioGuardado?.potion, INITIAL_INVENTORY.potion),
+        superPotion: normalizarContadorItem(inventarioGuardado?.superPotion, INITIAL_INVENTORY.superPotion),
     };
 }
 
@@ -150,11 +158,10 @@ function crearRival(nombreStarterJugador) {
 
 function normalizarRival(rivalGuardado, nombreStarterJugador) {
     const rivalBasePorDefecto = crearRival(nombreStarterJugador);
-    const ultimoHitoSuperado = Number.parseInt(rivalGuardado?.ultimoHitoSuperado, 10);
     return {
         nombreEntrenador: rivalGuardado?.nombreEntrenador || rivalBasePorDefecto.nombreEntrenador,
         starterBase: rivalGuardado?.starterBase || rivalBasePorDefecto.starterBase,
-        ultimoHitoSuperado: Number.isNaN(ultimoHitoSuperado) ? 0 : Math.max(0, ultimoHitoSuperado),
+        ultimoHitoSuperado: normalizarContadorItem(rivalGuardado?.ultimoHitoSuperado, 0),
     };
 }
 
@@ -186,8 +193,8 @@ function construirPokemonRival() {
     const nombreFormaRival = cadenaRival[Math.min(indiceJugador, cadenaRival.length - 1)] || rival.starterBase;
     const datosRival = obtenerDatosPokemon(nombreFormaRival);
     const hitoRival = obtenerHitoRivalPendiente();
-    const nivelBase = Math.max(starter.nivel || NIVEL_INICIAL, NIVEL_INICIAL + victorias + (hitoRival * 2));
-    const multiplicador = 1 + (hitoRival * 0.12) + (indiceJugador * 0.08);
+    const nivelBase = Math.max(starter.nivel || NIVEL_INICIAL, NIVEL_INICIAL + victorias + (hitoRival * RIVAL_BONUS_NIVEL));
+    const multiplicador = 1 + (hitoRival * RIVAL_BONUS_HITO) + (indiceJugador * RIVAL_BONUS_EVOLUCION);
 
     return {
         nombre: datosRival.nombre,
@@ -223,9 +230,9 @@ function otorgarRecompensaVictoria(enemigo) {
     if (enemigo.esRival) {
         agregarRecompensa("superPotion", 1);
         agregarRecompensa("potion", 1);
-    } else if (enemigo.esLegendario || (esFormaFinal(starter.nombre) && (enemigo.nivel || 0) >= 40)) {
+    } else if (enemigo.esLegendario || (esFormaFinal(starter.nombre) && (enemigo.nivel || 0) >= RECOMPENSA_SUPER_POTION_NIVEL_FINAL)) {
         agregarRecompensa("superPotion", 1);
-    } else if (victorias % 4 === 0 || (enemigo.nivel || 0) >= 28) {
+    } else if (victorias % RECOMPENSA_SUPER_POTION_CADA === 0 || (enemigo.nivel || 0) >= RECOMPENSA_SUPER_POTION_NIVEL) {
         agregarRecompensa("superPotion", 1);
     } else {
         agregarRecompensa("potion", 1);

@@ -53,6 +53,8 @@ export const INITIAL_INVENTORY = {
   superPotion: 1,
 };
 
+export const RIVAL_INTERVALO = 10;
+
 export const RIVAL_STARTERS = {
   Bulbasaur: "Charmander",
   Charmander: "Squirtle",

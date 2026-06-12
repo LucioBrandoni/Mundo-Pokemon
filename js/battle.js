@@ -238,6 +238,7 @@
     }
 
     function elegirIdEnemigo(maxId, permitirLegendarios) {
+        // PROB_LEGENDARIO_FORMA_FINAL representa una probabilidad directa (ej. 0.35 = 35%)
         if (permitirLegendarios && Math.random() < PROB_LEGENDARIO_FORMA_FINAL) {
             return LEGENDARY_IDS[Math.floor(Math.random() * LEGENDARY_IDS.length)];
         }

@@ -1,4 +1,4 @@
-import { starters, ITEM_DEFINITIONS } from "./data.js";
+import { starters, ITEM_DEFINITIONS, RIVAL_INTERVALO } from "./data.js";
 import { obtenerLogros, LOGROS_DEFINICION } from "./achievements.js";
 
 // Retraso entre la entrada de cada carta (en segundos)
@@ -108,10 +108,10 @@ export function mostrarResultado(contenedorStats, contenedorMsg, nick, starter, 
     </div>
   `).join('');
 
-  const hitoActualRival = Math.floor(victorias / 10);
-  const rivalPendiente = victorias >= 10 && hitoActualRival > (rival?.ultimoHitoSuperado || 0);
-  const restoVictorias = victorias % 10;
-  const victoriasParaRival = rivalPendiente ? 0 : (restoVictorias === 0 ? 10 : 10 - restoVictorias);
+  const hitoActualRival = Math.floor(victorias / RIVAL_INTERVALO);
+  const rivalPendiente = victorias >= RIVAL_INTERVALO && hitoActualRival > (rival?.ultimoHitoSuperado || 0);
+  const restoVictorias = victorias % RIVAL_INTERVALO;
+  const victoriasParaRival = rivalPendiente ? 0 : (restoVictorias === 0 ? RIVAL_INTERVALO : RIVAL_INTERVALO - restoVictorias);
   const rivalEstado = rivalPendiente
     ? "⚠️ Tu rival ya te está esperando para el próximo desafío."
     : `⏳ Próximo rival en ${victoriasParaRival} ${victoriasParaRival === 1 ? "victoria" : "victorias"}.`;
@@ -151,5 +151,4 @@ export function mostrarResultado(contenedorStats, contenedorMsg, nick, starter, 
   // Pequeño efecto visual opcional al mostrar el resultado
   contenedorStats.querySelector(".tarjeta").classList.add("fade-in");
 }
-
 
