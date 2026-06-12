@@ -1,5 +1,6 @@
 import { starters, ITEM_DEFINITIONS, RIVAL_INTERVALO } from "./data.js";
-import { obtenerLogros, LOGROS_DEFINICION } from "./achievements.js";
+import { obtenerLogros, LOGROS_DEFINICION, mostrarPantallaLogros } from "./achievements.js";
+import { obtenerRecord } from "./storage.js";
 
 // Retraso entre la entrada de cada carta (en segundos)
 const CARD_STAGGER_DELAY_S = 0.15;
@@ -45,7 +46,7 @@ export function mostrarOpcionesPokemon(contenedor, callback) {
 
 // Mostrar el resultado con la tarjeta del Pokémon elegido y el historial de batallas
 
-export function mostrarResultado(contenedorStats, contenedorMsg, nick, starter, victorias = 0, derrotas = 0, historial = [], xpPorNivel = 100, inventario = {}, rival = null) {
+export function mostrarResultado(contenedorStats, contenedorMsg, nick, starter, victorias = 0, derrotas = 0, historial = [], xpPorNivel = 100, inventario = {}, rival = null, record = null) {
   const totalBatallas = victorias + derrotas;
 
   // Construir el historial de las últimas 5 batallas
@@ -86,7 +87,11 @@ export function mostrarResultado(contenedorStats, contenedorMsg, nick, starter, 
 
   // Logros desbloqueados
   const logrosDesbloqueados = obtenerLogros();
+  const recordActual = record || obtenerRecord();
   let logrosHTML = '';
+  const totalLogros = LOGROS_DEFINICION.length;
+  const logrosCount = logrosDesbloqueados.length;
+
   if (logrosDesbloqueados.length > 0) {
     const badges = logrosDesbloqueados.map(id => {
       const def = LOGROS_DEFINICION.find(l => l.id === id);
@@ -95,8 +100,38 @@ export function mostrarResultado(contenedorStats, contenedorMsg, nick, starter, 
     }).join('');
     logrosHTML = `
       <div class="logros-container" aria-label="Logros desbloqueados">
-        <p class="logros-titulo">🏅 Logros</p>
+        <p class="logros-titulo">🏅 Logros (${logrosCount}/${totalLogros})</p>
         <div class="logros-grid" role="list">${badges}</div>
+        <button id="btnVerLogros" class="btn-ver-logros" aria-label="Ver todos los logros">Ver todos los logros 📋</button>
+      </div>`;
+  } else {
+    logrosHTML = `
+      <div class="logros-container" aria-label="Logros">
+        <p class="logros-titulo">🏅 Logros (0/${totalLogros})</p>
+        <p style="font-size:0.4rem;color:#aaa;margin:4px 0">¡Ganá batallas para desbloquear logros!</p>
+        <button id="btnVerLogros" class="btn-ver-logros" aria-label="Ver todos los logros">Ver todos los logros 📋</button>
+      </div>`;
+  }
+
+  let recordHTML = '';
+  if (recordActual && (recordActual.mayorRacha > 0 || recordActual.mayorNivel > 0)) {
+    recordHTML = `
+      <div class="record-container" aria-label="Récord histórico">
+        <p class="record-titulo">🏆 Récord histórico</p>
+        <div class="record-grid">
+          <div class="record-item" aria-label="Mayor racha: ${recordActual.mayorRacha}">
+            <span class="record-emoji">🔥</span>
+            <span class="record-label">Mayor racha</span>
+            <strong class="record-valor">${recordActual.mayorRacha}</strong>
+            ${recordActual.fechaMayorRacha ? `<span class="record-fecha">${recordActual.fechaMayorRacha}</span>` : ''}
+          </div>
+          <div class="record-item" aria-label="Mayor nivel: ${recordActual.mayorNivel}">
+            <span class="record-emoji">⭐</span>
+            <span class="record-label">Mayor nivel</span>
+            <strong class="record-valor">${recordActual.mayorNivel}</strong>
+            ${recordActual.fechaMayorNivel ? `<span class="record-fecha">${recordActual.fechaMayorNivel}</span>` : ''}
+          </div>
+        </div>
       </div>`;
   }
 
@@ -144,11 +179,18 @@ export function mostrarResultado(contenedorStats, contenedorMsg, nick, starter, 
       </div>
       ${progresoHTML}
       ${historialHTML}
+      ${recordHTML}
       ${logrosHTML}
     </div>
   `;
 
   // Pequeño efecto visual opcional al mostrar el resultado
   contenedorStats.querySelector(".tarjeta").classList.add("fade-in");
+
+  // Adjuntar evento al botón de logros generado dentro del HTML
+  const btnVerLogros = contenedorStats.querySelector("#btnVerLogros");
+  if (btnVerLogros) {
+    btnVerLogros.addEventListener("click", mostrarPantallaLogros);
+  }
 }
 

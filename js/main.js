@@ -1,9 +1,9 @@
-import { guardarEnStorage, obtenerDeStorage, guardarBatalla, obtenerHistorial } from "./storage.js";
+import { guardarEnStorage, obtenerDeStorage, guardarBatalla, obtenerHistorial, actualizarRecord, obtenerRecord, guardarRecord } from "./storage.js";
 import { mostrarOpcionesPokemon, mostrarResultado } from "./dom.js";
 import { mostrarConfirmacion, mostrarAlerta } from "./ui.js";
 import { obtenerPokemonEnemigo, iniciarBatalla, obtenerMovimientosPokemon } from "./battle.js";
 import { starters, nextEvolution, INITIAL_INVENTORY, ITEM_DEFINITIONS, RIVAL_STARTERS, RIVAL_TRAINER_NAME, RIVAL_INTERVALO, obtenerCadenaEvolutiva, obtenerDatosPokemon, obtenerBaseCadena, esFormaFinal } from "./data.js";
-import { verificarLogros, desbloquearLogroEvolucion } from "./achievements.js";
+import { verificarLogros, desbloquearLogroEvolucion, desbloquearLogroCazadorLeyendas, obtenerColeccionistaBases, guardarColeccionistaBases, mostrarPantallaLogros } from "./achievements.js";
 
 // Referencias al DOM
 
@@ -288,7 +288,7 @@ if (starter) {
 
 if (nick && starter) {
     const historial = obtenerHistorial();
-    mostrarResultado(pokemonStats, mensajeFinal, nick, starter, victorias, derrotas, historial, XP_POR_NIVEL, inventario, rival);
+    mostrarResultado(pokemonStats, mensajeFinal, nick, starter, victorias, derrotas, historial, XP_POR_NIVEL, inventario, rival, obtenerRecord());
     mostrarSeccion(resultadoContainer);
     agregarBotonesFinales();
     // Reanudar batalla pendiente si existe
@@ -339,7 +339,7 @@ function seleccionarPokemon(index) {
         guardarRival();
         ocultarSeccion(pokemonContainer);
         const historial = obtenerHistorial();
-        mostrarResultado(pokemonStats, mensajeFinal, nick, starter, victorias, derrotas, historial, XP_POR_NIVEL, inventario, rival);
+        mostrarResultado(pokemonStats, mensajeFinal, nick, starter, victorias, derrotas, historial, XP_POR_NIVEL, inventario, rival, obtenerRecord());
         mostrarSeccion(resultadoContainer);
         agregarBotonesFinales();
     }
@@ -359,6 +359,7 @@ function agregarBotonesFinales() {
     btnContainer.style.gap = "10px";
     btnContainer.style.marginTop = "20px";
     btnContainer.style.justifyContent = "center";
+    btnContainer.style.flexWrap = "wrap";
 
     const btnVolver = document.createElement("button");
     btnVolver.textContent = "Volver al inicio";
@@ -369,7 +370,12 @@ function agregarBotonesFinales() {
         "Si volvés al inicio perderás todo tu progreso actual. ¿Estás seguro?",
         (confirmado) => {
           if (!confirmado) return;
+          // Preservar datos que deben sobrevivir entre partidas
+          const basesColeccionista = obtenerColeccionistaBases();
+          const recordGuardado = obtenerRecord();
           localStorage.clear();
+          guardarColeccionistaBases(basesColeccionista);
+          guardarRecord(recordGuardado);
           nick = "";
           starter = null;
           inventario = normalizarInventario(null);
@@ -391,8 +397,15 @@ function agregarBotonesFinales() {
     btnDesafio.setAttribute("aria-label", "Comenzar desafío y buscar un oponente Pokémon");
     btnDesafio.addEventListener("click", iniciarDesafio);
 
+    const btnLogros = document.createElement("button");
+    btnLogros.textContent = "🏅 Logros";
+    btnLogros.className = "btn logros-btn";
+    btnLogros.setAttribute("aria-label", "Ver todos los logros");
+    btnLogros.addEventListener("click", mostrarPantallaLogros);
+
     btnContainer.appendChild(btnVolver);
     btnContainer.appendChild(btnDesafio);
+    btnContainer.appendChild(btnLogros);
     resultadoContainer.appendChild(btnContainer);
     }
 
@@ -441,9 +454,9 @@ function mostrarEvolucionSiCorresponde() {
         delete starter.movimientos;
         guardarEnStorage("starter", starter);
         desbloquearLogroEvolucion();
-        verificarLogros({ gano: true, victorias, starter, rachaActual, multEnemigo: 1 });
+        verificarLogros({ gano: true, victorias, derrotas, starter, rachaActual, multEnemigo: 1 });
         const historial = obtenerHistorial();
-        mostrarResultado(pokemonStats, mensajeFinal, nick, starter, victorias, derrotas, historial, XP_POR_NIVEL, inventario, rival);
+        mostrarResultado(pokemonStats, mensajeFinal, nick, starter, victorias, derrotas, historial, XP_POR_NIVEL, inventario, rival, obtenerRecord());
         Swal.fire({
             title: `🎉 ¡${nombreAnterior} evolucionó a ${starter.nombre}!`,
             icon: "success",
@@ -523,6 +536,9 @@ function mostrarDialogoBatalla(enemigo) {
     cancelButtonText: "Huir 🏃",
     }).then(async (result) => {
     if (result.isConfirmed) {
+        if (enemigo.esLegendario) {
+            desbloquearLogroCazadorLeyendas();
+        }
         let movimientos;
         if (starter.movimientos && starter.movimientos.length > 0) {
             movimientos = starter.movimientos;
@@ -575,11 +591,12 @@ function mostrarDialogoBatalla(enemigo) {
                 efectividadJugador: stats.multJugador || 1,
             });
 
-            verificarLogros({ gano, victorias, starter, rachaActual, multEnemigo: stats.multEnemigo || 1 });
+            actualizarRecord(rachaActual, starter.nivel);
+            verificarLogros({ gano, victorias, derrotas, starter, rachaActual, multEnemigo: stats.multEnemigo || 1, ataqueEnemigo: stats.ataqueEnemigo ?? Infinity });
             localStorage.removeItem("enemigoActual");
 
             const historial = obtenerHistorial();
-            mostrarResultado(pokemonStats, mensajeFinal, nick, starter, victorias, derrotas, historial, XP_POR_NIVEL, inventario, rival);
+            mostrarResultado(pokemonStats, mensajeFinal, nick, starter, victorias, derrotas, historial, XP_POR_NIVEL, inventario, rival, obtenerRecord());
             mostrarResumenPostBatalla(subioNivel, xpGanada, recompensas);
         }, { inventario });
     } else {
