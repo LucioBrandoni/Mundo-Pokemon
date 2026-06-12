@@ -62,7 +62,7 @@ export const LOGROS_DEFINICION = [
     },
     {
         id: 'cazador_leyendas',
-        emoji: '⭐',
+        emoji: '💫',
         nombre: 'Cazador de Leyendas',
         descripcion: 'Enfrentarse a un Pokémon legendario',
     },
@@ -91,11 +91,11 @@ export function guardarColeccionistaBases(bases) {
 }
 
 function registrarFormaFinalKanto(nombrePokemon) {
-    const base = FORMAS_FINALES_KANTO[nombrePokemon];
-    if (!base) return;
+    const starterBase = FORMAS_FINALES_KANTO[nombrePokemon];
+    if (!starterBase) return;
     const bases = obtenerColeccionistaBases();
-    if (!bases.includes(base)) {
-        bases.push(base);
+    if (!bases.includes(starterBase)) {
+        bases.push(starterBase);
         guardarColeccionistaBases(bases);
     }
 }
@@ -175,7 +175,8 @@ export function verificarLogros(ctx) {
     }
 
     registrarFormaFinalKanto(starter.nombre);
-    if (BASES_KANTO.every(b => obtenerColeccionistaBases().includes(b)) && !estaDesbloqueado('coleccionista')) {
+    const basesColeccionista = obtenerColeccionistaBases();
+    if (BASES_KANTO.every(b => basesColeccionista.includes(b)) && !estaDesbloqueado('coleccionista')) {
         if (desbloquearLogro('coleccionista')) {
             notificarLogro(LOGROS_DEFINICION.find(l => l.id === 'coleccionista'));
         }
