@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title">
+  <title>Pokeball</title>
+  <circle cx="256" cy="256" r="248" fill="#f5f5f5" stroke="#111" stroke-width="16"/>
+  <path d="M24 256c0-128 104-232 232-232s232 104 232 232H24z" fill="#e60012"/>
+  <rect x="24" y="236" width="464" height="40" fill="#111"/>
+  <circle cx="256" cy="256" r="72" fill="#f5f5f5" stroke="#111" stroke-width="18"/>
+  <circle cx="256" cy="256" r="28" fill="#d9d9d9" stroke="#111" stroke-width="12"/>
+</svg>

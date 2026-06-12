@@ -1,8 +1,10 @@
     import { ITEM_DEFINITIONS, LEGENDARY_IDS, esFormaFinal } from "./data.js";
+    import { guardarEnSessionStorage, obtenerDeSessionStorage } from "./storage.js";
     import { mostrarAlerta } from "./ui.js";
     import { playAttackSound, playVictorySound, playDefeatSound } from "./audio.js";
 
     const MAX_INTENTOS = 3;
+    const POKEAPI_CACHE_PREFIX = "pokeapi-cache:";
 
     // Constantes para el cálculo de nivel del enemigo
     const MAX_NIVEL          = 100;
@@ -93,6 +95,27 @@
         return nombre.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
     }
 
+    function obtenerClaveCache(url) {
+        return `${POKEAPI_CACHE_PREFIX}${url}`;
+    }
+
+    async function fetchJsonConCache(url) {
+        const claveCache = obtenerClaveCache(url);
+        const datoCacheado = obtenerDeSessionStorage(claveCache);
+        if (datoCacheado) {
+            return datoCacheado;
+        }
+
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+
+        const data = await response.json();
+        guardarEnSessionStorage(claveCache, data);
+        return data;
+    }
+
     // ============================================================
     // Movimientos de reserva por tipo (sin llamadas a la API)
     // ============================================================
@@ -167,9 +190,7 @@
      */
     export async function obtenerMovimientosPokemon(nombrePokemon, tiposApi = []) {
         try {
-            const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${nombrePokemon.toLowerCase()}`);
-            if (!res.ok) throw new Error(`HTTP ${res.status}`);
-            const data = await res.json();
+            const data = await fetchJsonConCache(`https://pokeapi.co/api/v2/pokemon/${nombrePokemon.toLowerCase()}`);
 
             // Barajar y tomar 8 candidatos
             const all = [...(data.moves || [])];
@@ -182,8 +203,7 @@
             // Obtener detalles de los movimientos en paralelo
             const details = await Promise.all(
                 candidates.map(m =>
-                    fetch(m.move.url)
-                        .then(r => r.json())
+                    fetchJsonConCache(m.move.url)
                         .catch(() => null)
                 )
             );
@@ -206,10 +226,15 @@
             }
 
             const imagenEspaldas = data.sprites?.back_default || null;
-            return { movimientos, imagenEspaldas };
+            return { movimientos, imagenEspaldas, usaFallback: false, mensajeError: "" };
         } catch (err) {
             console.warn('Usando movimientos de reserva:', err);
-            return { movimientos: obtenerMovimientosFallback(tiposApi), imagenEspaldas: null };
+            return {
+                movimientos: obtenerMovimientosFallback(tiposApi),
+                imagenEspaldas: null,
+                usaFallback: true,
+                mensajeError: "No se pudieron cargar los movimientos reales desde la PokeAPI. Revisá tu conexión: se usarán movimientos de reserva en esta batalla.",
+            };
         }
     }
 
@@ -260,13 +285,7 @@
         for (let intento = 1; intento <= MAX_INTENTOS; intento++) {
             try {
                 const idRandom = elegirIdEnemigo(maxId, formaFinal);
-                const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${idRandom}`);
-
-                if (!response.ok) {
-                    throw new Error(`Respuesta HTTP inesperada: ${response.status}`);
-                }
-
-                const data = await response.json();
+                const data = await fetchJsonConCache(`https://pokeapi.co/api/v2/pokemon/${idRandom}`);
 
                 // Imagen: preferir front_default, luego official-artwork, luego dream_world
                 const imagenPokemon =
@@ -310,7 +329,7 @@
 
         // Todos los intentos fallaron: usar Pokémon de reserva
         console.error("No se pudo obtener el Pokémon enemigo tras varios intentos:", ultimoError);
-        mostrarAlerta("No se pudo conectar con la PokeAPI 😞. Se usará un oponente de reserva.", "error");
+        mostrarAlerta("La PokeAPI no respondió después de varios intentos. Revisá tu conexión: por ahora se usará un oponente de reserva.", "error");
         return {
             nombre:     "Pokémon Desconocido",
             imagen:     "assets/pokeball.png",
