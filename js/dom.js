@@ -168,7 +168,7 @@ export function mostrarResultado(contenedorStats, contenedorMsg, nick, starter, 
       <div class="nivel-xp">
         <p class="nivel-texto">⭐ Nivel: <strong>${nivel}</strong></p>
         <div class="xp-bar-container" title="XP: ${experiencia} / ${xpParaSiguienteNivel}">
-          <div class="xp-bar" style="width:${xpPorcentaje}%"></div>
+          <div class="xp-bar" style="width:0%"></div>
         </div>
         <p class="xp-texto">XP: ${experiencia} / ${xpParaSiguienteNivel}</p>
       </div>
@@ -186,6 +186,16 @@ export function mostrarResultado(contenedorStats, contenedorMsg, nick, starter, 
 
   // Pequeño efecto visual opcional al mostrar el resultado
   contenedorStats.querySelector(".tarjeta").classList.add("fade-in");
+
+  // Animar la barra de XP desde 0 hasta el porcentaje real (requiere dos frames para que el navegador procese el ancho inicial en 0)
+  const xpBarEl = contenedorStats.querySelector(".xp-bar");
+  if (xpBarEl) {
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        xpBarEl.style.width = xpPorcentaje + '%';
+      });
+    });
+  }
 
   // Adjuntar evento al botón de logros generado dentro del HTML
   const btnVerLogros = contenedorStats.querySelector("#btnVerLogros");

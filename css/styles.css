@@ -213,6 +213,21 @@ button:active {
     animation: battleShake 0.55s ease;
 }
 
+/* Sacudida + destello blanco al recibir un golpe */
+@keyframes battleHitFlash {
+    0%   { filter: brightness(1);                       transform: translateX(0); }
+    12%  { filter: brightness(8) saturate(0) invert(1); transform: translateX(-10px); }
+    28%  { filter: brightness(1);                       transform: translateX(10px); }
+    45%  { filter: brightness(6) saturate(0) invert(1); transform: translateX(-7px); }
+    65%  { filter: brightness(1);                       transform: translateX(7px); }
+    82%  { filter: brightness(4) saturate(0) invert(1); transform: translateX(-3px); }
+    100% { filter: brightness(1);                       transform: translateX(0); }
+}
+
+.battle-hit {
+    animation: battleHitFlash 0.55s ease;
+}
+
 /* Brillo dorado para el Pokémon ganador en combate */
 @keyframes battleWinner {
     0%   { filter: brightness(1); }
@@ -510,7 +525,7 @@ button:active {
 .xp-bar {
     height: 100%;
     background: linear-gradient(90deg, #00cc44, #66ff88);
-    transition: width 0.4s ease;
+    transition: width 1.2s cubic-bezier(0.22, 1, 0.36, 1);
     image-rendering: pixelated;
 }
 
@@ -903,4 +918,117 @@ button:active {
     font-size: 0.3rem;
     color: #aaa;
     margin-top: 2px;
+}
+
+/* ============================================================
+   Barra de ajustes (tema + sonido) — visible en todo momento
+   ============================================================ */
+
+.settings-bar {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    z-index: 8000;
+    display: flex;
+    gap: 6px;
+}
+
+.settings-btn {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.65rem;
+    padding: 8px 10px;
+    background: var(--nintendo-gray);
+    color: var(--nintendo-light);
+    border: 3px solid var(--nintendo-light);
+    cursor: pointer;
+    box-shadow: inset -2px -2px 0 rgba(0,0,0,0.3), 2px 2px 0 rgba(255,255,255,0.15);
+    transition: transform 0.1s;
+    line-height: 1;
+}
+
+.settings-btn:hover {
+    transform: scale(1.08);
+}
+
+.settings-btn:active {
+    transform: scale(0.96);
+    box-shadow: none;
+}
+
+/* ============================================================
+   Tema claro
+   ============================================================ */
+
+[data-theme="light"] {
+    --nintendo-dark:  #dcdcdc;
+    --nintendo-light: #1a1a1a;
+    --nintendo-gray:  #b8b8b8;
+}
+
+[data-theme="light"] body {
+    background-color: var(--nintendo-dark);
+    color: var(--nintendo-light);
+}
+
+[data-theme="light"] .battle-arena {
+    background: linear-gradient(180deg, #b8d4b8 0%, #d0d0d0 55%, #d0c8a0 100%);
+}
+
+[data-theme="light"] .battle-hp-bar-container,
+[data-theme="light"] .xp-bar-container {
+    background: #aaaaaa;
+    border-color: var(--nintendo-light);
+}
+
+[data-theme="light"] .battle-move-btn {
+    background: #c8c8c8;
+    color: var(--nintendo-light);
+}
+
+[data-theme="light"] .record-container {
+    background: linear-gradient(135deg, #c8d8c8 0%, #c8c8d8 100%);
+}
+
+[data-theme="light"] .record-label,
+[data-theme="light"] .historial-detalle,
+[data-theme="light"] .historial-fecha,
+[data-theme="light"] .xp-texto,
+[data-theme="light"] .battle-hp-numbers,
+[data-theme="light"] .rival-status {
+    color: #444;
+}
+
+[data-theme="light"] .logro-bloqueado {
+    background: rgba(200, 200, 200, 0.8);
+    border-color: #999;
+    color: #555;
+}
+
+[data-theme="light"] .logro-pista {
+    color: #666 !important;
+}
+
+[data-theme="light"] .inventario-container,
+[data-theme="light"] .nivel-xp {
+    background: #c8c8c8;
+}
+
+/* SweetAlert2 en tema claro */
+[data-theme="light"] .swal2-popup {
+    background-color: #dcdcdc !important;
+    color: #1a1a1a !important;
+    border-color: #1a1a1a !important;
+}
+
+[data-theme="light"] .swal2-title {
+    color: #1a1a1a !important;
+    text-shadow: none !important;
+}
+
+[data-theme="light"] .swal2-html-container {
+    color: #1a1a1a !important;
+}
+
+[data-theme="light"] .swal2-confirm {
+    color: #f0f0f0 !important;
 }

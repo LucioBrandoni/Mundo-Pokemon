@@ -1,5 +1,6 @@
     import { ITEM_DEFINITIONS, LEGENDARY_IDS, esFormaFinal } from "./data.js";
     import { mostrarAlerta } from "./ui.js";
+    import { playAttackSound, playVictorySound, playDefeatSound } from "./audio.js";
 
     const MAX_INTENTOS = 3;
 
@@ -548,7 +549,8 @@
 
             actualizarHP(enemyHpBar, enemyHpNums, hpEnemigo, hpMaxEnemigo);
             animarSprite(playerSprite, 'battle-attack');
-            animarSprite(enemySprite, 'battle-shake');
+            animarSprite(enemySprite, 'battle-hit');
+            playAttackSound();
 
             let msg = `${jugador.nombre} usó ${mov.nombre}`;
             if (mult >= 2) msg += ` — ¡Es muy eficaz! (×${mult})`;
@@ -581,6 +583,7 @@
             actualizarHP(playerHpBar, playerHpNums, hpJugador, hpMaxJugador);
             animarSprite(enemySprite, 'battle-attack');
             animarSprite(playerSprite, 'battle-shake');
+            playAttackSound();
 
             let msg = `${enemigo.nombre} usó ${movEnemigo.nombre}`;
             if (mult >= 2) msg += ` — ¡Es muy eficaz! (×${mult})`;
@@ -622,9 +625,11 @@
             if (gano) {
                 animarSprite(playerSprite, 'battle-winner');
                 setLog(`🏆 ¡${jugador.nombre} derrotó a ${enemigo.nombre}!`);
+                playVictorySound();
             } else {
                 animarSprite(enemySprite, 'battle-winner');
                 setLog(`💀 ${jugador.nombre} fue derrotado por ${enemigo.nombre}...`);
+                playDefeatSound();
             }
             btnHuir.style.display = 'none';
             btnItems.disabled = true;
