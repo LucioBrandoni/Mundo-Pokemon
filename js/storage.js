@@ -1,23 +1,63 @@
-// Funciones para manejo del localStorage
+// Funciones para manejo del localStorage y sessionStorage
 
-export function guardarEnStorage(clave, valor) {
-  if (typeof valor === 'string') {
-    localStorage.setItem(clave, valor);
-  } else {
-    localStorage.setItem(clave, JSON.stringify(valor));
-  }
+function serializarValor(valor) {
+  return typeof valor === 'string' ? valor : JSON.stringify(valor);
 }
 
-export function obtenerDeStorage(clave) {
-  const dato = localStorage.getItem(clave);
+function parsearValorGuardado(dato) {
   if (!dato) return null;
-  
+
   try {
     return JSON.parse(dato);
-  } catch (e) {
+  } catch {
     // Si no se puede parsear como JSON, devolver el valor como string
     return dato;
   }
+}
+
+function guardarEn(store, clave, valor) {
+  try {
+    store.setItem(clave, serializarValor(valor));
+  } catch (error) {
+    console.warn(`No se pudo guardar la clave "${clave}" en storage:`, error);
+  }
+}
+
+function obtenerDe(store, clave) {
+  try {
+    return parsearValorGuardado(store.getItem(clave));
+  } catch (error) {
+    console.warn(`No se pudo leer la clave "${clave}" de storage:`, error);
+    return null;
+  }
+}
+
+function removerDe(store, clave) {
+  try {
+    store.removeItem(clave);
+  } catch (error) {
+    console.warn(`No se pudo eliminar la clave "${clave}" de storage:`, error);
+  }
+}
+
+export function guardarEnStorage(clave, valor) {
+  guardarEn(localStorage, clave, valor);
+}
+
+export function obtenerDeStorage(clave) {
+  return obtenerDe(localStorage, clave);
+}
+
+export function guardarEnSessionStorage(clave, valor) {
+  guardarEn(sessionStorage, clave, valor);
+}
+
+export function obtenerDeSessionStorage(clave) {
+  return obtenerDe(sessionStorage, clave);
+}
+
+export function removerDeSessionStorage(clave) {
+  removerDe(sessionStorage, clave);
 }
 
 // Historial de batallas (máximo 20 registros, más reciente primero)
@@ -38,7 +78,7 @@ export function obtenerHistorial() {
 }
 
 export function limpiarHistorial() {
-  localStorage.removeItem('historial');
+  removerDe(localStorage, 'historial');
 }
 
 // Récord histórico (persiste entre partidas)
@@ -57,7 +97,7 @@ export function obtenerRecord() {
 }
 
 export function guardarRecord(record) {
-  localStorage.setItem(RECORD_KEY, JSON.stringify(record));
+  guardarEn(localStorage, RECORD_KEY, record);
 }
 
 export function actualizarRecord(rachaActual, nivelActual) {

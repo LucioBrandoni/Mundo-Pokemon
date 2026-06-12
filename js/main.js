@@ -54,6 +54,13 @@ btnSound.addEventListener('click', () => {
 aplicarIconoTema();
 aplicarIconoSonido();
 
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js', { scope: './' })
+            .catch(error => console.warn('No se pudo registrar el Service Worker:', error));
+    });
+}
+
 // Anuncia un mensaje a los lectores de pantalla sin mostrarlo visualmente
 function anunciarAccesible(texto) {
     ariaLive.textContent = "";
@@ -585,6 +592,9 @@ function mostrarDialogoBatalla(enemigo) {
             movimientos = resultado.movimientos;
             if (resultado.imagenEspaldas) starter.imagenEspaldas = resultado.imagenEspaldas;
             ocultarCarga();
+            if (resultado.usaFallback && resultado.mensajeError) {
+                mostrarAlerta(resultado.mensajeError, "warning");
+            }
         }
         iniciarBatalla(starter, enemigo, movimientos, (gano, stats = {}) => {
             starter.movimientos = movimientos;

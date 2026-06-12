@@ -29,8 +29,10 @@ Implementada con HTML, CSS y JavaScript (módulos ES). Utiliza SweetAlert2 para 
 - **Sistema de batallas**: Enfrentarse a Pokémon salvajes obtenidos de la PokeAPI.
 - **Objetos en combate**: Usar Pociones y Super Pociones como acción de turno alternativa.
 - **Persistencia de datos**: Guardar progreso usando localStorage.
+- **Caché en sesión**: Reutilizar respuestas de la PokeAPI con sessionStorage durante la sesión actual.
 - **Rivales y dificultad progresiva**: Enemigos más fuertes en el late game y batallas especiales contra un rival cada 10 victorias.
 - **Notificaciones**: Confirmaciones y alertas usando SweetAlert2.
+- **PWA básica**: Manifest y Service Worker para instalación y soporte offline básico.
 
 ## Arquitectura y decisiones
 **Patrón**: Aplicación cliente (SPA simple).
@@ -43,6 +45,8 @@ Implementada con HTML, CSS y JavaScript (módulos ES). Utiliza SweetAlert2 para 
 - `js/dom.js`: Renderizado dinámico de elementos.
 - `js/ui.js`: Interfaz de usuario con SweetAlert2.
 - `js/storage.js`: Gestión de localStorage con manejo de errores.
+- `manifest.json`: Metadatos de la aplicación instalable.
+- `sw.js`: Caché del shell de la app y soporte offline básico.
 - `js/battle.js`: Lógica de combate e integración con PokeAPI.
 
 **Dependencias**: 
@@ -73,7 +77,9 @@ El proyecto está desplegado en: https://luciobrandoni.github.io/Mundo-Pokemon/
 - **Módulos ES6**: Código organizado en módulos importables.
 - **Async/Await**: Para llamadas a la PokeAPI.
 - **LocalStorage**: Persistencia de datos del entrenador y Pokémon.
+- **SessionStorage**: Caché temporal de respuestas de la PokeAPI dentro de la sesión.
 - **API REST**: Integración con PokeAPI para Pokémon aleatorios.
+- **PWA**: Instalación como app y cacheo de archivos estáticos.
 - **Validación de imágenes**: Fallback a imagen por defecto si falla la carga.
 
 ## Notas para desarrolladores
