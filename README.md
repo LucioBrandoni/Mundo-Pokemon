@@ -27,7 +27,9 @@ Implementada con HTML, CSS y JavaScript (módulos ES). Utiliza SweetAlert2 para 
 - **Ingreso de nickname**: El usuario ingresa su nombre de entrenador.
 - **Selección de Pokémon inicial**: Elegir entre Bulbasaur, Charmander o Squirtle.
 - **Sistema de batallas**: Enfrentarse a Pokémon salvajes obtenidos de la PokeAPI.
+- **Objetos en combate**: Usar Pociones y Super Pociones como acción de turno alternativa.
 - **Persistencia de datos**: Guardar progreso usando localStorage.
+- **Rivales y dificultad progresiva**: Enemigos más fuertes en el late game y batallas especiales contra un rival cada 10 victorias.
 - **Notificaciones**: Confirmaciones y alertas usando SweetAlert2.
 
 ## Arquitectura y decisiones
@@ -78,6 +80,7 @@ El proyecto está desplegado en: https://luciobrandoni.github.io/Mundo-Pokemon/
 - El localStorage se limpia automáticamente al abrir la página en GitHub Pages para garantizar una experiencia consistente.
 - Las imágenes de Pokémon se cargan desde múltiples fuentes de la PokeAPI con validación.
 - El sistema de combate usa estadísticas base más valores aleatorios para variedad.
+- La mochila, el rival y los hitos especiales también se persisten en localStorage.
 
 ## Tecnologías utilizadas
 - HTML5
