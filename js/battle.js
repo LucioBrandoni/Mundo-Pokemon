@@ -376,6 +376,12 @@
         actualizarHP(playerHpBar, playerHpNums, hpJugador, hpMaxJugador);
         setLog(`¡Un ${enemigo.nombre} salvaje apareció! ¿Qué hará ${jugador.nombre}?`);
 
+        // Si todos los PP están agotados al inicio (cargados desde una batalla previa), usar Forcejeo
+        if (movimientosJugador.every(m => m.ppActual <= 0)) {
+            movimientosJugador.splice(0, movimientosJugador.length,
+                { ...MOVIMIENTO_FORCEJEO, ppActual: MOVIMIENTO_FORCEJEO.pp });
+        }
+
         pantalla.style.display = 'flex';
         renderMovimientos();
 
