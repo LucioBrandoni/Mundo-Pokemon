@@ -22,6 +22,16 @@ const APP_SHELL = [
   './assets/pokeball-icon.svg',
 ];
 
+function crearRespuestaOffline(mensaje) {
+  return new Response(mensaje, {
+    status: 503,
+    statusText: 'Service Unavailable',
+    headers: {
+      'Content-Type': 'text/plain; charset=utf-8',
+    },
+  });
+}
+
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(APP_CACHE).then((cache) => cache.addAll(APP_SHELL))
@@ -65,7 +75,7 @@ async function responderAppShell(request) {
     if (request.mode === 'navigate') {
       return cache.match('./index.html');
     }
-    throw new Error(`No hay respuesta en caché disponible para ${request.url}.`);
+    return crearRespuestaOffline(`No hay respuesta en caché disponible para ${request.url}.`);
   }
 }
 
@@ -78,7 +88,7 @@ async function responderRuntime(request) {
   } catch {
     const cacheado = await cache.match(request);
     if (cacheado) return cacheado;
-    throw new Error(`No hay respuesta dinámica en caché disponible para ${request.url}.`);
+    return crearRespuestaOffline(`No hay respuesta dinámica en caché disponible para ${request.url}.`);
   }
 }
 
