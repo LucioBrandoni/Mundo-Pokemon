@@ -796,3 +796,111 @@ button:active {
 .logro-badge span {
     font-size: 0.38rem;
 }
+
+.logro-bloqueado {
+    background: rgba(40, 40, 40, 0.8);
+    border-color: #555;
+    color: #888;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    text-align: center;
+    min-width: 70px;
+}
+
+.logro-bloqueado span {
+    color: #888;
+}
+
+.logro-pista {
+    font-size: 0.32rem !important;
+    color: #666 !important;
+    line-height: 1.5;
+    display: block;
+    margin-top: 2px;
+}
+
+.logros-pantalla-grid {
+    justify-content: center;
+    gap: 10px;
+    padding: 4px;
+}
+
+.btn-ver-logros {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.38rem;
+    background: #2a4a6a;
+    color: var(--nintendo-light);
+    border: 2px solid #7ab;
+    padding: 6px 10px;
+    margin-top: 8px;
+    cursor: pointer;
+    display: block;
+    width: 100%;
+    box-shadow: inset -2px -2px 0 rgba(0,0,0,0.3);
+    transition: transform 0.1s;
+}
+
+.btn-ver-logros:hover {
+    transform: scale(1.02);
+}
+
+/* Récord histórico */
+
+.record-container {
+    margin-top: 12px;
+    background: linear-gradient(135deg, #1a2a1a 0%, #1a1a2a 100%);
+    border: var(--pixel-border) solid #FFD700;
+    padding: 10px;
+    box-shadow:
+        inset -4px -4px 0 0 rgba(0,0,0,0.3),
+        4px 4px 0 0 rgba(255,215,0,0.15);
+}
+
+.record-titulo {
+    font-size: 0.6rem;
+    text-align: center;
+    color: #FFD700;
+    margin: 0 0 8px 0;
+    text-shadow: 1px 1px 0 var(--nintendo-dark);
+}
+
+.record-grid {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.record-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    background: var(--nintendo-gray);
+    border: 2px solid #FFD700;
+    padding: 8px 12px;
+    min-width: 80px;
+    box-shadow: inset -2px -2px 0 rgba(0,0,0,0.3);
+}
+
+.record-emoji {
+    font-size: 1rem;
+}
+
+.record-label {
+    font-size: 0.35rem;
+    color: #ccc;
+    text-align: center;
+}
+
+.record-valor {
+    font-size: 0.7rem;
+    color: #FFD700;
+}
+
+.record-fecha {
+    font-size: 0.3rem;
+    color: #aaa;
+    margin-top: 2px;
+}

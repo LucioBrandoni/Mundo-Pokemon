@@ -40,3 +40,43 @@ export function obtenerHistorial() {
 export function limpiarHistorial() {
   localStorage.removeItem('historial');
 }
+
+// Récord histórico (persiste entre partidas)
+
+const RECORD_KEY = 'record';
+
+export function obtenerRecord() {
+  try {
+    return JSON.parse(localStorage.getItem(RECORD_KEY)) || {
+      mayorRacha: 0, fechaMayorRacha: null,
+      mayorNivel: 0, fechaMayorNivel: null,
+    };
+  } catch {
+    return { mayorRacha: 0, fechaMayorRacha: null, mayorNivel: 0, fechaMayorNivel: null };
+  }
+}
+
+export function guardarRecord(record) {
+  localStorage.setItem(RECORD_KEY, JSON.stringify(record));
+}
+
+export function actualizarRecord(rachaActual, nivelActual) {
+  const record = obtenerRecord();
+  const hoy = new Date().toLocaleDateString('es-AR');
+  let actualizado = false;
+
+  if (rachaActual > record.mayorRacha) {
+    record.mayorRacha = rachaActual;
+    record.fechaMayorRacha = hoy;
+    actualizado = true;
+  }
+
+  if (nivelActual > record.mayorNivel) {
+    record.mayorNivel = nivelActual;
+    record.fechaMayorNivel = hoy;
+    actualizado = true;
+  }
+
+  if (actualizado) guardarRecord(record);
+  return record;
+}
