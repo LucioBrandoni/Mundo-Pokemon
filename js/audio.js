@@ -36,9 +36,11 @@ function tone(ctx, freq, type, start, dur, vol = 0.28) {
     osc.type = type;
     osc.frequency.setValueAtTime(freq, start);
     gain.gain.setValueAtTime(vol, start);
-    gain.gain.exponentialRampToValueAtTime(0.0001, start + dur);
+    // exponentialRampToValueAtTime requiere un valor > 0 y un tiempo estrictamente futuro
+    const rampEnd = Math.max(start + dur, ctx.currentTime + 0.001);
+    gain.gain.exponentialRampToValueAtTime(0.0001, rampEnd);
     osc.start(start);
-    osc.stop(start + dur + 0.05);
+    osc.stop(rampEnd + 0.05);
 }
 
 /** Sonido de ataque: impacto breve y distorsionado. */

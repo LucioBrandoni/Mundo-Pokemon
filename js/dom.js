@@ -168,7 +168,8 @@ export function mostrarResultado(contenedorStats, contenedorMsg, nick, starter, 
       <div class="nivel-xp">
         <p class="nivel-texto">⭐ Nivel: <strong>${nivel}</strong></p>
         <div class="xp-bar-container" title="XP: ${experiencia} / ${xpParaSiguienteNivel}">
-          <div class="xp-bar" style="width:0%"></div>
+          <!-- width comienza en 0%; se anima hacia el porcentaje real con requestAnimationFrame (ver abajo) -->
+          <div class="xp-bar" style="width:0%" data-xp-target="${xpPorcentaje}"></div>
         </div>
         <p class="xp-texto">XP: ${experiencia} / ${xpParaSiguienteNivel}</p>
       </div>
@@ -190,9 +191,10 @@ export function mostrarResultado(contenedorStats, contenedorMsg, nick, starter, 
   // Animar la barra de XP desde 0 hasta el porcentaje real (requiere dos frames para que el navegador procese el ancho inicial en 0)
   const xpBarEl = contenedorStats.querySelector(".xp-bar");
   if (xpBarEl) {
+    const target = parseInt(xpBarEl.dataset.xpTarget, 10) || 0;
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
-        xpBarEl.style.width = xpPorcentaje + '%';
+        xpBarEl.style.width = target + '%';
       });
     });
   }

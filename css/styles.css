@@ -1004,8 +1004,11 @@ button:active {
     color: #555;
 }
 
-[data-theme="light"] .logro-pista {
-    color: #666 !important;
+[data-theme="light"] .logro-bloqueado .logro-pista {
+    color: #666;
+    font-size: 0.32rem !important;
+    display: block;
+    margin-top: 2px;
 }
 
 [data-theme="light"] .inventario-container,
