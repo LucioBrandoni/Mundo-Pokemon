@@ -1,4 +1,4 @@
-import { starters } from "./data.js";
+import { starters, ITEM_DEFINITIONS } from "./data.js";
 import { obtenerLogros, LOGROS_DEFINICION } from "./achievements.js";
 
 // Retraso entre la entrada de cada carta (en segundos)
@@ -45,7 +45,7 @@ export function mostrarOpcionesPokemon(contenedor, callback) {
 
 // Mostrar el resultado con la tarjeta del Pokémon elegido y el historial de batallas
 
-export function mostrarResultado(contenedorStats, contenedorMsg, nick, starter, victorias = 0, derrotas = 0, historial = [], xpPorNivel = 100) {
+export function mostrarResultado(contenedorStats, contenedorMsg, nick, starter, victorias = 0, derrotas = 0, historial = [], xpPorNivel = 100, inventario = {}, rival = null) {
   const totalBatallas = victorias + derrotas;
 
   // Construir el historial de las últimas 5 batallas
@@ -57,9 +57,17 @@ export function mostrarResultado(contenedorStats, contenedorMsg, nick, starter, 
       const efectividadBadge = b.efectividadJugador > 1
         ? `<span class="badge-efectivo">⚡×${b.efectividadJugador}</span>`
         : "";
+      const batallaEspecial = b.tipoBatalla === "rival"
+        ? `<span class="historial-badge historial-badge-rival">Rival</span>`
+        : b.tipoBatalla === "legendario"
+          ? `<span class="historial-badge historial-badge-legendario">Legendario</span>`
+          : "";
+      const nombreEnemigo = b.entrenador
+        ? `${b.entrenador} · ${b.enemigo}`
+        : `vs ${b.enemigo}`;
       return `
         <div class="historial-item ${colorClase}" role="listitem">
-          <span>${icono} <strong>vs ${b.enemigo}</strong></span>
+          <span>${icono} <strong>${nombreEnemigo}</strong> ${batallaEspecial}</span>
           <span class="historial-detalle">${b.enemigoTipo || ''} · Niv.${b.enemigoNivel || '?'} ${efectividadBadge}</span>
           <span class="historial-fecha">${b.fecha}</span>
         </div>`;
@@ -92,6 +100,29 @@ export function mostrarResultado(contenedorStats, contenedorMsg, nick, starter, 
       </div>`;
   }
 
+  const inventarioHTML = Object.entries(ITEM_DEFINITIONS).map(([clave, item]) => `
+    <div class="item-badge" aria-label="${item.nombre}: ${inventario[clave] || 0}">
+      <span>${item.emoji}</span>
+      <span>${item.nombre}</span>
+      <strong>x${inventario[clave] || 0}</strong>
+    </div>
+  `).join('');
+
+  const hitoActualRival = Math.floor(victorias / 10);
+  const rivalPendiente = victorias >= 10 && hitoActualRival > (rival?.ultimoHitoSuperado || 0);
+  const restoVictorias = victorias % 10;
+  const victoriasParaRival = rivalPendiente ? 0 : (restoVictorias === 0 ? 10 : 10 - restoVictorias);
+  const rivalEstado = rivalPendiente
+    ? "⚠️ Tu rival ya te está esperando para el próximo desafío."
+    : `⏳ Próximo rival en ${victoriasParaRival} ${victoriasParaRival === 1 ? "victoria" : "victorias"}.`;
+
+  const progresoHTML = `
+    <div class="inventario-container" aria-label="Inventario y progreso especial">
+      <p class="inventario-titulo">🎒 Mochila</p>
+      <div class="inventario-grid" role="list">${inventarioHTML}</div>
+      <p class="rival-status">${rivalEstado}</p>
+    </div>`;
+
   contenedorStats.innerHTML = `
     <div class="tarjeta" data-pokemon="${starter.nombre}">
       <h2>${starter.nombre}</h2>
@@ -111,6 +142,7 @@ export function mostrarResultado(contenedorStats, contenedorMsg, nick, starter, 
       <div class="battle-stats">
         <p>⚔️ Batallas: <strong>${totalBatallas}</strong> &nbsp;|&nbsp; 🏆 Victorias: <strong>${victorias}</strong> &nbsp;|&nbsp; 💀 Derrotas: <strong>${derrotas}</strong></p>
       </div>
+      ${progresoHTML}
       ${historialHTML}
       ${logrosHTML}
     </div>
@@ -119,7 +151,5 @@ export function mostrarResultado(contenedorStats, contenedorMsg, nick, starter, 
   // Pequeño efecto visual opcional al mostrar el resultado
   contenedorStats.querySelector(".tarjeta").classList.add("fade-in");
 }
-
-
 
 

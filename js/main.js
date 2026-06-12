@@ -1,8 +1,8 @@
-import { guardarEnStorage, obtenerDeStorage, guardarBatalla, obtenerHistorial, limpiarHistorial } from "./storage.js";
+import { guardarEnStorage, obtenerDeStorage, guardarBatalla, obtenerHistorial } from "./storage.js";
 import { mostrarOpcionesPokemon, mostrarResultado } from "./dom.js";
 import { mostrarConfirmacion, mostrarAlerta } from "./ui.js";
 import { obtenerPokemonEnemigo, iniciarBatalla, obtenerMovimientosPokemon } from "./battle.js";
-import { starters, nextEvolution } from "./data.js";
+import { starters, nextEvolution, INITIAL_INVENTORY, ITEM_DEFINITIONS, RIVAL_STARTERS, RIVAL_TRAINER_NAME, obtenerCadenaEvolutiva, obtenerDatosPokemon, obtenerBaseCadena, esFormaFinal } from "./data.js";
 import { verificarLogros, desbloquearLogroEvolucion } from "./achievements.js";
 
 // Referencias al DOM
@@ -54,6 +54,8 @@ function ocultarSeccion(el) {
 
 let nick = obtenerDeStorage("nick") || "";
 let starter = obtenerDeStorage("starter") || null;
+let inventario = normalizarInventario(obtenerDeStorage("inventario"));
+let rival = starter ? normalizarRival(obtenerDeStorage("rival"), starter.nombre) : null;
 
 // Asegura que el starter tenga imagenEspaldas si fue guardado antes de que se añadiera el campo
 if (starter && !starter.imagenEspaldas) {
@@ -125,6 +127,128 @@ const XP_VICTORIA  = 50;
 const XP_DERROTA   = 15;
 const XP_POR_NIVEL = 100;
 const NIVEL_INICIAL = 5;
+const RIVAL_INTERVALO = 10;
+
+function normalizarInventario(inventarioGuardado) {
+    const potions = Number.parseInt(inventarioGuardado?.potion, 10);
+    const superPotions = Number.parseInt(inventarioGuardado?.superPotion, 10);
+    return {
+        potion: Number.isNaN(potions) ? INITIAL_INVENTORY.potion : Math.max(0, potions),
+        superPotion: Number.isNaN(superPotions) ? INITIAL_INVENTORY.superPotion : Math.max(0, superPotions),
+    };
+}
+
+function crearRival(nombreStarterJugador) {
+    const starterBase = obtenerBaseCadena(nombreStarterJugador);
+    const rivalStarter = RIVAL_STARTERS[starterBase] || starters[0].nombre;
+    return {
+        nombreEntrenador: RIVAL_TRAINER_NAME,
+        starterBase: rivalStarter,
+        ultimoHitoSuperado: 0,
+    };
+}
+
+function normalizarRival(rivalGuardado, nombreStarterJugador) {
+    const rivalBasePorDefecto = crearRival(nombreStarterJugador);
+    const ultimoHitoSuperado = Number.parseInt(rivalGuardado?.ultimoHitoSuperado, 10);
+    return {
+        nombreEntrenador: rivalGuardado?.nombreEntrenador || rivalBasePorDefecto.nombreEntrenador,
+        starterBase: rivalGuardado?.starterBase || rivalBasePorDefecto.starterBase,
+        ultimoHitoSuperado: Number.isNaN(ultimoHitoSuperado) ? 0 : Math.max(0, ultimoHitoSuperado),
+    };
+}
+
+function guardarInventario() {
+    guardarEnStorage("inventario", inventario);
+}
+
+function guardarRival() {
+    if (rival) guardarEnStorage("rival", rival);
+}
+
+function obtenerIndiceEvolucion(nombrePokemon) {
+    const cadena = obtenerCadenaEvolutiva(nombrePokemon);
+    const indice = cadena.indexOf(nombrePokemon);
+    return indice >= 0 ? indice : 0;
+}
+
+function obtenerHitoRivalPendiente() {
+    if (!starter || !rival || victorias < RIVAL_INTERVALO) return 0;
+    const hitoActual = Math.floor(victorias / RIVAL_INTERVALO);
+    return hitoActual > rival.ultimoHitoSuperado ? hitoActual : 0;
+}
+
+function construirPokemonRival() {
+    if (!starter || !rival) return null;
+
+    const cadenaRival = obtenerCadenaEvolutiva(rival.starterBase);
+    const indiceJugador = obtenerIndiceEvolucion(starter.nombre);
+    const nombreFormaRival = cadenaRival[Math.min(indiceJugador, cadenaRival.length - 1)] || rival.starterBase;
+    const datosRival = obtenerDatosPokemon(nombreFormaRival);
+    const hitoRival = obtenerHitoRivalPendiente();
+    const nivelBase = Math.max(starter.nivel || NIVEL_INICIAL, NIVEL_INICIAL + victorias + (hitoRival * 2));
+    const multiplicador = 1 + (hitoRival * 0.12) + (indiceJugador * 0.08);
+
+    return {
+        nombre: datosRival.nombre,
+        imagen: datosRival.imagen,
+        ataque: Math.round(datosRival.ataque * multiplicador),
+        vida: Math.round(datosRival.vida * multiplicador),
+        tipos: datosRival.tiposApi || [],
+        tipoDisplay: datosRival.tipo,
+        nivel: Math.min(100, nivelBase),
+        habilidades: ["Espíritu competitivo", "Entrenamiento constante"],
+        esRival: true,
+        entrenador: rival.nombreEntrenador,
+        hitoRival,
+    };
+}
+
+function obtenerMensajeEncuentro(enemigo) {
+    if (enemigo.esRival) {
+        return `${enemigo.entrenador} te desafía con ${enemigo.nombre}.`;
+    }
+    return `¡Un ${enemigo.nombre} salvaje apareció!`;
+}
+
+function otorgarRecompensaVictoria(enemigo) {
+    if (!enemigo) return null;
+
+    const recompensas = [];
+    const agregarRecompensa = (clave, cantidad = 1) => {
+        inventario[clave] = (inventario[clave] || 0) + cantidad;
+        recompensas.push({ clave, cantidad, ...ITEM_DEFINITIONS[clave] });
+    };
+
+    if (enemigo.esRival) {
+        agregarRecompensa("superPotion", 1);
+        agregarRecompensa("potion", 1);
+    } else if (enemigo.esLegendario || (esFormaFinal(starter.nombre) && (enemigo.nivel || 0) >= 40)) {
+        agregarRecompensa("superPotion", 1);
+    } else if (victorias % 4 === 0 || (enemigo.nivel || 0) >= 28) {
+        agregarRecompensa("superPotion", 1);
+    } else {
+        agregarRecompensa("potion", 1);
+    }
+
+    guardarInventario();
+    return recompensas;
+}
+
+function formatearRecompensas(recompensas = []) {
+    return recompensas.map(item => `${item.emoji} ${item.nombre} x${item.cantidad}`).join("<br>");
+}
+
+function mostrarRecompensaSiCorresponde(recompensas = []) {
+    if (recompensas.length === 0) return Promise.resolve();
+
+    return Swal.fire({
+        title: "🎁 Recompensa obtenida",
+        html: `<p>Ganaste:</p><p>${formatearRecompensas(recompensas)}</p>`,
+        icon: "success",
+        confirmButtonText: "Guardar en mochila",
+    });
+}
 
 function procesarExperiencia(gano) {
     const xpGanada = gano ? XP_VICTORIA : XP_DERROTA;
@@ -148,9 +272,16 @@ function procesarExperiencia(gano) {
 
 // Flujo inicial
 
+if (starter) {
+    inventario = normalizarInventario(inventario);
+    guardarInventario();
+    rival = normalizarRival(rival, starter.nombre);
+    guardarRival();
+}
+
 if (nick && starter) {
     const historial = obtenerHistorial();
-    mostrarResultado(pokemonStats, mensajeFinal, nick, starter, victorias, derrotas, historial, XP_POR_NIVEL);
+    mostrarResultado(pokemonStats, mensajeFinal, nick, starter, victorias, derrotas, historial, XP_POR_NIVEL, inventario, rival);
     mostrarSeccion(resultadoContainer);
     agregarBotonesFinales();
     // Reanudar batalla pendiente si existe
@@ -194,10 +325,14 @@ function seleccionarPokemon(index) {
     mostrarConfirmacion(`¿Querés elegir a ${elegido.nombre}?`, (confirmado) => {
     if (confirmado) {
         starter = { ...elegido, nivel: NIVEL_INICIAL, experiencia: 0 };
+        inventario = normalizarInventario(null);
+        rival = crearRival(starter.nombre);
         guardarEnStorage("starter", starter);
+        guardarInventario();
+        guardarRival();
         ocultarSeccion(pokemonContainer);
         const historial = obtenerHistorial();
-        mostrarResultado(pokemonStats, mensajeFinal, nick, starter, victorias, derrotas, historial, XP_POR_NIVEL);
+        mostrarResultado(pokemonStats, mensajeFinal, nick, starter, victorias, derrotas, historial, XP_POR_NIVEL, inventario, rival);
         mostrarSeccion(resultadoContainer);
         agregarBotonesFinales();
     }
@@ -230,6 +365,8 @@ function agregarBotonesFinales() {
           localStorage.clear();
           nick = "";
           starter = null;
+          inventario = normalizarInventario(null);
+          rival = null;
           victorias = 0;
           derrotas = 0;
           rachaActual = 0;
@@ -299,7 +436,7 @@ function mostrarEvolucionSiCorresponde() {
         desbloquearLogroEvolucion();
         verificarLogros({ gano: true, victorias, starter, rachaActual, multEnemigo: 1 });
         const historial = obtenerHistorial();
-        mostrarResultado(pokemonStats, mensajeFinal, nick, starter, victorias, derrotas, historial, XP_POR_NIVEL);
+        mostrarResultado(pokemonStats, mensajeFinal, nick, starter, victorias, derrotas, historial, XP_POR_NIVEL, inventario, rival);
         Swal.fire({
             title: `🎉 ¡${nombreAnterior} evolucionó a ${starter.nombre}!`,
             icon: "success",
@@ -309,16 +446,36 @@ function mostrarEvolucionSiCorresponde() {
     });
 }
 
-async function iniciarDesafio() {
-    mostrarCarga("Buscando oponente...");
+function mostrarResumenPostBatalla(subioNivel, xpGanada, recompensas = []) {
+    if (subioNivel) {
+        const recompensaHtml = recompensas.length > 0
+            ? `<hr><p>🎁 Recompensas</p><p style="font-size:0.72em">${formatearRecompensas(recompensas)}</p>`
+            : "";
+        return Swal.fire({
+            title: `⭐ ¡${starter.nombre} subió de nivel!`,
+            html: `<p>¡Ahora está en el <strong>nivel ${starter.nivel}</strong>!</p><p style="font-size:0.75em">+${xpGanada} XP obtenidos</p>${recompensaHtml}`,
+            icon: "success",
+            confirmButtonText: "¡Genial!",
+        }).then(() => {
+            mostrarEvolucionSiCorresponde();
+        });
+    }
 
-    const enemigo = await obtenerPokemonEnemigo(victorias);
+    return mostrarRecompensaSiCorresponde(recompensas);
+}
+
+async function iniciarDesafio() {
+    const hitoRival = obtenerHitoRivalPendiente();
+    mostrarCarga(hitoRival ? "Buscando a tu rival..." : "Buscando oponente...");
+
+    const enemigo = hitoRival
+        ? construirPokemonRival()
+        : await obtenerPokemonEnemigo({ victorias, starter });
+
     ocultarCarga();
     if (!enemigo) return;
 
-    // Guardar el enemigo actual para poder reanudar si se recarga la página
     guardarEnStorage("enemigoActual", enemigo);
-
     mostrarDialogoBatalla(enemigo);
 }
 
@@ -327,8 +484,14 @@ function htmlDetallesEnemigo(enemigo) {
     const habilidadTexto = (enemigo.habilidades && enemigo.habilidades.length > 0)
         ? enemigo.habilidades.join(', ')
         : 'Desconocida';
+    const badgeEspecial = enemigo.esRival
+        ? `<p><strong>Entrenador:</strong> ${enemigo.entrenador}</p>`
+        : enemigo.esLegendario
+            ? `<p><strong>Clase:</strong> Pokémon legendario</p>`
+            : "";
     return `
         <img src="${enemigo.imagen}" alt="${enemigo.nombre}" width="150">
+        ${badgeEspecial}
         <p><strong>Nivel:</strong> ${enemigo.nivel || '?'}</p>
         <p><strong>Tipo:</strong> ${enemigo.tipoDisplay || 'Desconocido'}</p>
         <p><strong>Vida:</strong> ${enemigo.vida}</p>
@@ -339,12 +502,17 @@ function htmlDetallesEnemigo(enemigo) {
 
 // Muestra el diálogo de encuentro con el enemigo y gestiona la batalla
 function mostrarDialogoBatalla(enemigo) {
-    anunciarAccesible(`¡Un ${enemigo.nombre} salvaje apareció! Nivel: ${enemigo.nivel || '?'}, Tipo: ${enemigo.tipoDisplay || 'Desconocido'}, Vida: ${enemigo.vida}, Ataque: ${enemigo.ataque}.`);
+    const tituloBatalla = enemigo.esRival
+        ? `⚔️ ${enemigo.entrenador} te desafía`
+        : enemigo.esLegendario
+            ? `🌟 ¡${enemigo.nombre} apareció!`
+            : `¡Un ${enemigo.nombre} salvaje apareció!`;
+    anunciarAccesible(`${obtenerMensajeEncuentro(enemigo)} Nivel: ${enemigo.nivel || '?'}, Tipo: ${enemigo.tipoDisplay || 'Desconocido'}, Vida: ${enemigo.vida}, Ataque: ${enemigo.ataque}.`);
     Swal.fire({
-    title: `¡Un ${enemigo.nombre} salvaje apareció!`,
+    title: tituloBatalla,
     html: htmlDetallesEnemigo(enemigo),
     showCancelButton: true,
-    confirmButtonText: "¡Luchar!",
+    confirmButtonText: enemigo.esRival ? "¡Aceptar reto!" : "¡Luchar!",
     cancelButtonText: "Huir 🏃",
     }).then(async (result) => {
     if (result.isConfirmed) {
@@ -359,56 +527,54 @@ function mostrarDialogoBatalla(enemigo) {
             ocultarCarga();
         }
         iniciarBatalla(starter, enemigo, movimientos, (gano, stats = {}) => {
-            // Persistir los PP consumidos durante la batalla
             starter.movimientos = movimientos;
-            // null significa que el jugador huyó durante la batalla
+
             if (gano === null) {
                 guardarEnStorage("starter", starter);
+                guardarInventario();
                 localStorage.removeItem("enemigoActual");
                 return;
             }
-            // Actualizar y persistir estadísticas
+
             if (gano) {
                 victorias++;
                 rachaActual++;
                 guardarEnStorage("victorias", victorias);
+                if (enemigo.esRival && rival) {
+                    rival.ultimoHitoSuperado = Math.max(rival.ultimoHitoSuperado, enemigo.hitoRival || 0);
+                    guardarRival();
+                }
             } else {
                 derrotas++;
                 rachaActual = 0;
                 guardarEnStorage("derrotas", derrotas);
             }
             guardarEnStorage("racha", rachaActual);
-            // Procesar experiencia y nivel
+
             const { xpGanada, subioNivel } = procesarExperiencia(gano);
-            // Guardar en historial
+            const recompensas = gano ? otorgarRecompensaVictoria(enemigo) : [];
+            guardarInventario();
+
             guardarBatalla({
                 fecha:              new Date().toLocaleDateString('es-AR'),
                 enemigo:            enemigo.nombre,
                 enemigoTipo:        enemigo.tipoDisplay || 'Desconocido',
                 enemigoNivel:       enemigo.nivel || '?',
+                entrenador:         enemigo.entrenador || '',
+                tipoBatalla:        enemigo.esRival ? 'rival' : (enemigo.esLegendario ? 'legendario' : 'salvaje'),
                 resultado:          gano ? 'victoria' : 'derrota',
                 ataqueJugador:      stats.ataqueJugador,
                 ataqueEnemigo:      stats.ataqueEnemigo,
                 efectividadJugador: stats.multJugador || 1,
             });
-            // Verificar logros
+
             verificarLogros({ gano, victorias, starter, rachaActual, multEnemigo: stats.multEnemigo || 1 });
-            // Limpiar batalla pendiente y refrescar pantalla
             localStorage.removeItem("enemigoActual");
+
             const historial = obtenerHistorial();
-            mostrarResultado(pokemonStats, mensajeFinal, nick, starter, victorias, derrotas, historial, XP_POR_NIVEL);
-            // Notificación de subida de nivel
-            if (subioNivel) {
-                Swal.fire({
-                    title: `⭐ ¡${starter.nombre} subió de nivel!`,
-                    html: `<p>¡Ahora está en el <strong>nivel ${starter.nivel}</strong>!</p><p style="font-size:0.75em">+${xpGanada} XP obtenidos</p>`,
-                    icon: "success",
-                    confirmButtonText: "¡Genial!",
-                }).then(() => {
-                    mostrarEvolucionSiCorresponde();
-                });
-            }
-        });
+            mostrarResultado(pokemonStats, mensajeFinal, nick, starter, victorias, derrotas, historial, XP_POR_NIVEL, inventario, rival);
+            mostrarResumenPostBatalla(subioNivel, xpGanada, recompensas);
+        }, { inventario });
     } else {
         localStorage.removeItem("enemigoActual");
         mostrarAlerta("Escapaste del combate...", "info");
@@ -421,7 +587,7 @@ function reanudarBatalla(enemigo) {
     Swal.fire({
     title: "¡Tienes una batalla pendiente!",
     html: `
-        <p>Estabas a punto de enfrentarte a <strong>${enemigo.nombre}</strong>.</p>
+        <p>Estabas a punto de enfrentarte a <strong>${enemigo.esRival ? `${enemigo.entrenador} · ${enemigo.nombre}` : enemigo.nombre}</strong>.</p>
         ${htmlDetallesEnemigo(enemigo)}
     `,
     showCancelButton: true,
@@ -436,8 +602,3 @@ function reanudarBatalla(enemigo) {
     }
     });
 }
-
-
-
-
-

@@ -1,3 +1,4 @@
+    import { ITEM_DEFINITIONS, LEGENDARY_IDS, esFormaFinal } from "./data.js";
     import { mostrarAlerta } from "./ui.js";
 
     const MAX_INTENTOS = 3;
@@ -8,6 +9,8 @@
     const NIVEL_POR_VICTORIA = 4;
     const NIVEL_RANDOM_BOOST = 10;
     const NIVEL_BASE         = 5;
+    const BONUS_NIVEL_FORMA_FINAL = 8;
+    const PROB_LEGENDARIO_FORMA_FINAL = 0.35;
 
     // Factor de escala de HP para que las batallas duren varios turnos
     const HP_SCALE = 2;
@@ -213,7 +216,8 @@
     // Rango de Pokémon según progreso
     // ============================================================
 
-    function obtenerRangoPokemon(victorias) {
+    function obtenerRangoPokemon(victorias, formaFinal = false) {
+        if (formaFinal) return 721;         // Hasta Gen 6
         if (victorias >= 20) return 649; // Gen 1–5 (más fuertes)
         if (victorias >= 15) return 386; // Gen 1–3
         if (victorias >= 10) return 251; // Gen 1–2
@@ -222,17 +226,38 @@
         return 50;                        // Gen 1 inicial (más débiles)
     }
 
+    function normalizarProgreso(progreso) {
+        if (typeof progreso === 'number') {
+            return { victorias: progreso, starter: null };
+        }
+
+        return {
+            victorias: progreso?.victorias || 0,
+            starter: progreso?.starter || null,
+        };
+    }
+
+    function elegirIdEnemigo(maxId, permitirLegendarios) {
+        if (permitirLegendarios && Math.random() < PROB_LEGENDARIO_FORMA_FINAL) {
+            return LEGENDARY_IDS[Math.floor(Math.random() * LEGENDARY_IDS.length)];
+        }
+
+        return Math.floor(Math.random() * maxId) + 1;
+    }
+
     // ============================================================
     // Obtener Pokémon enemigo desde la API
     // ============================================================
 
-    export async function obtenerPokemonEnemigo(victorias = 0) {
-        const maxId = obtenerRangoPokemon(victorias);
+    export async function obtenerPokemonEnemigo(progreso = 0) {
+        const { victorias, starter } = normalizarProgreso(progreso);
+        const formaFinal = esFormaFinal(starter?.nombre);
+        const maxId = obtenerRangoPokemon(victorias, formaFinal);
         let ultimoError = null;
 
         for (let intento = 1; intento <= MAX_INTENTOS; intento++) {
             try {
-                const idRandom = Math.floor(Math.random() * maxId) + 1;
+                const idRandom = elegirIdEnemigo(maxId, formaFinal);
                 const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${idRandom}`);
 
                 if (!response.ok) {
@@ -253,8 +278,9 @@
                 const tipoDisplay = traducirTipos(tipos);
 
                 // Nivel (basado en victorias + azar, rango MIN_NIVEL–MAX_NIVEL)
+                const bonusFormaFinal = formaFinal ? BONUS_NIVEL_FORMA_FINAL : 0;
                 const nivel = Math.min(MAX_NIVEL, Math.max(MIN_NIVEL,
-                    victorias * NIVEL_POR_VICTORIA + Math.floor(Math.random() * NIVEL_RANDOM_BOOST) + NIVEL_BASE));
+                    victorias * NIVEL_POR_VICTORIA + Math.floor(Math.random() * NIVEL_RANDOM_BOOST) + NIVEL_BASE + bonusFormaFinal));
 
                 // Habilidades no ocultas (máx. 2)
                 const habilidades = (data.abilities || [])
@@ -271,6 +297,7 @@
                     tipoDisplay,
                     nivel,
                     habilidades,
+                    esLegendario: LEGENDARY_IDS.includes(data.id),
                 };
 
             } catch (error) {
@@ -291,6 +318,7 @@
             tipoDisplay:'Normal',
             nivel:      5,
             habilidades:['Desconocida'],
+            esLegendario: false,
         };
     }
 
@@ -333,28 +361,26 @@
      * @param {Array}    movimientosJugador - Movimientos del jugador obtenidos de la API
      * @param {Function} onFinished         - Callback(gano, stats) | gano===null si huyó
      */
-    export function iniciarBatalla(jugador, enemigo, movimientosJugador, onFinished) {
+    export function iniciarBatalla(jugador, enemigo, movimientosJugador, onFinished, opciones = {}) {
         const movimientosEnemigo = obtenerMovimientosFallback(enemigo.tipos || ['normal']);
+        const inventario = opciones.inventario || {};
 
         const hpMaxJugador = jugador.vida * HP_SCALE;
         const hpMaxEnemigo = enemigo.vida * HP_SCALE;
         let hpJugador = hpMaxJugador;
         let hpEnemigo = hpMaxEnemigo;
 
-        // Estadísticas acumuladas para el callback final
         let mejorMultJugador = 1;
         let mejorMultEnemigo = 1;
         let totalAtaqueJugador = 0;
         let totalAtaqueEnemigo = 0;
-
-        // Indicador para bloquear acciones durante el turno enemigo
         let accionesHabilitadas = true;
 
-        // Referencias al DOM de la pantalla de batalla
         const pantalla       = document.getElementById('battleScreen');
         const logText        = document.getElementById('battleLogText');
         const movesGrid      = document.getElementById('battleMovesGrid');
         const btnHuir        = document.getElementById('battleBtnHuir');
+        const btnItems       = document.getElementById('battleBtnItems');
         const enemyHpBar     = document.getElementById('battleEnemyHpBar');
         const playerHpBar    = document.getElementById('battlePlayerHpBar');
         const enemyHpNums    = document.getElementById('battleEnemyHpNums');
@@ -364,8 +390,10 @@
         const enemySprite    = document.getElementById('battleEnemySprite');
         const playerSprite   = document.getElementById('battlePlayerSprite');
 
-        // — Inicializar pantalla —
-        enemyNameEl.textContent  = `${enemigo.nombre}  Niv.${enemigo.nivel || '?'}`;
+        const nombreEnemigoPantalla = enemigo.esRival
+            ? `${enemigo.entrenador} · ${enemigo.nombre}  Niv.${enemigo.nivel || '?'}`
+            : `${enemigo.nombre}  Niv.${enemigo.nivel || '?'}`;
+        enemyNameEl.textContent  = nombreEnemigoPantalla;
         playerNameEl.textContent = `${jugador.nombre}  Niv.${jugador.nivel || '?'}`;
         enemySprite.src  = enemigo.imagen;
         enemySprite.alt  = enemigo.nombre;
@@ -374,9 +402,8 @@
 
         actualizarHP(enemyHpBar, enemyHpNums, hpEnemigo, hpMaxEnemigo);
         actualizarHP(playerHpBar, playerHpNums, hpJugador, hpMaxJugador);
-        setLog(`¡Un ${enemigo.nombre} salvaje apareció! ¿Qué hará ${jugador.nombre}?`);
+        setLog(`${enemigo.esRival ? `${enemigo.entrenador} envió a ${enemigo.nombre}` : `¡Un ${enemigo.nombre} salvaje apareció!`} ¿Qué hará ${jugador.nombre}?`);
 
-        // Si todos los PP están agotados al inicio (cargados desde una batalla previa), usar Forcejeo
         if (movimientosJugador.every(m => m.ppActual <= 0)) {
             movimientosJugador.splice(0, movimientosJugador.length,
                 { ...MOVIMIENTO_FORCEJEO, ppActual: MOVIMIENTO_FORCEJEO.pp });
@@ -384,14 +411,37 @@
 
         pantalla.style.display = 'flex';
         renderMovimientos();
+        renderBotonesUtilidad();
 
-        btnHuir.disabled = false;
         btnHuir.onclick = () => {
             if (!accionesHabilitadas) return;
             terminarBatalla(false, true);
         };
 
-        // — Helpers —
+        btnItems.onclick = async () => {
+            if (!accionesHabilitadas || !hayItemsUsables()) return;
+
+            const opcionesItems = obtenerItemsUsables();
+            const inputOptions = Object.fromEntries(
+                opcionesItems.map(([clave, cantidad]) => [
+                    clave,
+                    `${ITEM_DEFINITIONS[clave].emoji} ${ITEM_DEFINITIONS[clave].nombre} (+${ITEM_DEFINITIONS[clave].curacion} HP) · x${cantidad}`,
+                ])
+            );
+
+            const { value: itemSeleccionado } = await Swal.fire({
+                title: 'Usar objeto',
+                input: 'radio',
+                inputOptions,
+                inputValidator: (value) => !value && 'Elegí un objeto para continuar.',
+                showCancelButton: true,
+                confirmButtonText: 'Usar objeto',
+                cancelButtonText: 'Cancelar',
+            });
+
+            if (!itemSeleccionado || !accionesHabilitadas) return;
+            usarItemTurno(itemSeleccionado);
+        };
 
         function setLog(msg) {
             logText.textContent = msg;
@@ -406,9 +456,20 @@
             nums.textContent = `${Math.max(0, actual)} / ${maximo}`;
         }
 
+        function obtenerItemsUsables() {
+            if (hpJugador >= hpMaxJugador) return [];
+
+            return Object.entries(ITEM_DEFINITIONS)
+                .filter(([clave]) => (inventario[clave] || 0) > 0);
+        }
+
+        function hayItemsUsables() {
+            return obtenerItemsUsables().length > 0;
+        }
+
         function renderMovimientos() {
             movesGrid.innerHTML = '';
-            movimientosJugador.forEach((mov, i) => {
+            movimientosJugador.forEach((mov) => {
                 const btn = document.createElement('button');
                 btn.className = 'battle-move-btn';
                 const color = TYPE_COLORS[mov.tipo] || '#888';
@@ -423,20 +484,28 @@
                 btn.setAttribute('aria-label', `${mov.nombre} — Tipo ${traducirTipoUI(mov.tipo)}, Poder ${mov.poder}, PP ${mov.ppActual}`);
                 btn.addEventListener('click', () => {
                     if (!accionesHabilitadas || mov.ppActual <= 0) return;
-                    ejecutarTurnoJugador(mov, i);
+                    ejecutarTurnoJugador(mov);
                 });
                 movesGrid.appendChild(btn);
             });
         }
 
+        function renderBotonesUtilidad() {
+            const totalPociones = inventario.potion || 0;
+            const totalSuper = inventario.superPotion || 0;
+            btnItems.innerHTML = `Items 🎒<br>P:${totalPociones} SP:${totalSuper}`;
+            btnItems.disabled = !accionesHabilitadas || !hayItemsUsables();
+            btnItems.setAttribute('aria-label', `Usar objeto. Pociones ${totalPociones}, Super Pociones ${totalSuper}`);
+            btnHuir.disabled = !accionesHabilitadas;
+        }
+
         function bloquear() {
             accionesHabilitadas = false;
             renderMovimientos();
-            btnHuir.disabled = true;
+            renderBotonesUtilidad();
         }
 
         function desbloquear() {
-            // Si todos los PP están agotados, agregar Forcejeo
             const todosSinPP = movimientosJugador.every(m => m.ppActual <= 0);
             if (todosSinPP) {
                 movimientosJugador.splice(0, movimientosJugador.length,
@@ -444,10 +513,25 @@
             }
             accionesHabilitadas = true;
             renderMovimientos();
-            btnHuir.disabled = false;
+            renderBotonesUtilidad();
         }
 
-        // — Flujo de turnos —
+        function usarItemTurno(claveItem) {
+            const item = ITEM_DEFINITIONS[claveItem];
+            if (!item || (inventario[claveItem] || 0) <= 0 || hpJugador >= hpMaxJugador) return;
+
+            bloquear();
+            inventario[claveItem] = Math.max(0, (inventario[claveItem] || 0) - 1);
+            const vidaAntes = hpJugador;
+            hpJugador = Math.min(hpMaxJugador, hpJugador + item.curacion);
+            const curacionAplicada = hpJugador - vidaAntes;
+
+            actualizarHP(playerHpBar, playerHpNums, hpJugador, hpMaxJugador);
+            animarSprite(playerSprite, 'battle-winner');
+            setLog(`${jugador.nombre} usó ${item.nombre} y recuperó ${curacionAplicada} HP.`);
+
+            setTimeout(ejecutarTurnoEnemigo, 1200);
+        }
 
         function ejecutarTurnoJugador(mov) {
             bloquear();
@@ -510,16 +594,12 @@
             desbloquear();
         }
 
-        // — Animación de sprite —
-
         function animarSprite(sprite, clase) {
             sprite.classList.remove(clase);
-            void sprite.offsetWidth; // forzar reflow
+            void sprite.offsetWidth;
             sprite.classList.add(clase);
             sprite.addEventListener('animationend', () => sprite.classList.remove(clase), { once: true });
         }
-
-        // — Fin de batalla —
 
         function limpiarPantalla() {
             pantalla.style.display = 'none';
@@ -527,6 +607,7 @@
             enemySprite.classList.remove('battle-winner', 'battle-shake', 'battle-attack');
             btnHuir.style.display = '';
             accionesHabilitadas = true;
+            renderBotonesUtilidad();
         }
 
         function terminarBatalla(gano, huyo = false) {
@@ -537,7 +618,6 @@
                 return;
             }
 
-            // Animación ganador/perdedor en pantalla
             if (gano) {
                 animarSprite(playerSprite, 'battle-winner');
                 setLog(`🏆 ¡${jugador.nombre} derrotó a ${enemigo.nombre}!`);
@@ -546,6 +626,7 @@
                 setLog(`💀 ${jugador.nombre} fue derrotado por ${enemigo.nombre}...`);
             }
             btnHuir.style.display = 'none';
+            btnItems.disabled = true;
 
             setTimeout(() => {
                 limpiarPantalla();
@@ -553,6 +634,9 @@
                 const titulo = gano
                     ? `🔥 ¡${jugador.nombre} ganó la batalla!`
                     : `💀 ${jugador.nombre} fue derrotado...`;
+                const etiquetaEnemiga = enemigo.esRival
+                    ? `${enemigo.entrenador} · ${enemigo.nombre}`
+                    : enemigo.nombre;
 
                 Swal.fire({
                     title: titulo,
@@ -570,7 +654,7 @@
                                 <img src="${enemigo.imagen}" alt="${enemigo.nombre}" width="90"
                                      class="${gano ? 'battle-shake' : 'battle-winner'}"
                                      style="image-rendering:pixelated">
-                                <p><strong>${enemigo.nombre}</strong></p>
+                                <p><strong>${etiquetaEnemiga}</strong></p>
                                 <p style="font-size:0.65em">Daño total: ${totalAtaqueEnemigo}</p>
                             </div>
                         </div>
@@ -588,4 +672,3 @@
             }, 1500);
         }
     }
-

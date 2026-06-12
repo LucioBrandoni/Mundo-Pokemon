@@ -371,6 +371,49 @@ button:active {
         4px 4px 0 0 rgba(255,255,255,0.2);
 }
 
+.inventario-container {
+    margin-top: 12px;
+    background: var(--nintendo-dark);
+    border: var(--pixel-border) solid var(--nintendo-light);
+    padding: 10px;
+    box-shadow:
+        inset -4px -4px 0 0 rgba(0,0,0,0.3),
+        4px 4px 0 0 rgba(255,255,255,0.2);
+}
+
+.inventario-titulo {
+    font-size: 0.6rem;
+    text-align: center;
+    margin: 0 0 8px 0;
+    color: #9be0ff;
+}
+
+.inventario-grid {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.item-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.42rem;
+    background: var(--nintendo-gray);
+    border: 2px solid var(--nintendo-light);
+    padding: 6px 8px;
+    box-shadow: inset -2px -2px 0 rgba(0,0,0,0.3);
+}
+
+.rival-status {
+    margin: 10px 0 0 0;
+    text-align: center;
+    font-size: 0.45rem;
+    color: #ddd;
+    line-height: 1.8;
+}
+
 /* Historial de batallas */
 .historial {
     margin-top: 16px;
@@ -413,6 +456,24 @@ button:active {
 .historial-fecha {
     color: #aaa;
     font-size: 0.45rem;
+}
+
+.historial-badge {
+    display: inline-block;
+    margin-left: 6px;
+    padding: 2px 5px;
+    border: 1px solid var(--nintendo-light);
+    font-size: 0.35rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.historial-badge-rival {
+    background: rgba(72, 48, 140, 0.9);
+}
+
+.historial-badge-legendario {
+    background: rgba(172, 120, 0, 0.9);
 }
 
 .badge-efectivo {
@@ -646,11 +707,18 @@ button:active {
     color: #eee;
 }
 
+.battle-utility-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-self: stretch;
+}
+
+.battle-item-btn,
 .battle-flee-btn {
     font-family: 'Press Start 2P', cursive;
     font-size: 0.45rem;
     padding: 10px 14px;
-    background: #555;
     color: var(--nintendo-light);
     border: 3px solid var(--nintendo-light);
     cursor: pointer;
@@ -660,12 +728,24 @@ button:active {
     align-self: stretch;
     display: flex;
     align-items: center;
+    justify-content: center;
+    line-height: 1.6;
 }
 
+.battle-item-btn {
+    background: #226688;
+}
+
+.battle-flee-btn {
+    background: #555;
+}
+
+.battle-item-btn:hover:not(:disabled),
 .battle-flee-btn:hover:not(:disabled) {
     transform: scale(1.04);
 }
 
+.battle-item-btn:disabled,
 .battle-flee-btn:disabled {
     opacity: 0.38;
     cursor: not-allowed;

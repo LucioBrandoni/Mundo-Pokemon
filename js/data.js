@@ -34,3 +34,74 @@ export const nextEvolution = {
   "Totodile":   { nombre: "Croconaw",   nivelEvolucion: 18, tipo: "Agua",            tiposApi: ["water"],             vida: 65, ataque: 80,  imagen: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/159.png", imagenEspaldas: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/159.png" },
   "Croconaw":   { nombre: "Feraligatr", nivelEvolucion: 30, tipo: "Agua",            tiposApi: ["water"],             vida: 85, ataque: 105, imagen: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/160.png", imagenEspaldas: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/160.png" },
 };
+
+export const ITEM_DEFINITIONS = {
+  potion: {
+    nombre: "Poción",
+    curacion: 20,
+    emoji: "🧪",
+  },
+  superPotion: {
+    nombre: "Super Poción",
+    curacion: 50,
+    emoji: "✨",
+  },
+};
+
+export const INITIAL_INVENTORY = {
+  potion: 2,
+  superPotion: 1,
+};
+
+export const RIVAL_STARTERS = {
+  Bulbasaur: "Charmander",
+  Charmander: "Squirtle",
+  Squirtle: "Bulbasaur",
+  Chikorita: "Cyndaquil",
+  Cyndaquil: "Totodile",
+  Totodile: "Chikorita",
+};
+
+export const RIVAL_TRAINER_NAME = "Rival";
+
+export const LEGENDARY_IDS = [144, 145, 146, 150, 243, 244, 245, 249, 250];
+
+export function obtenerCadenaEvolutiva(nombrePokemon) {
+  if (!nombrePokemon) return [];
+
+  const base = starters.find(starter => starter.nombre === nombrePokemon);
+  if (base) {
+    const cadena = [base.nombre];
+    let actual = base.nombre;
+    while (nextEvolution[actual]) {
+      actual = nextEvolution[actual].nombre;
+      cadena.push(actual);
+    }
+    return cadena;
+  }
+
+  const entrada = Object.entries(nextEvolution).find(([, evolucion]) => evolucion.nombre === nombrePokemon);
+  if (!entrada) return [nombrePokemon];
+
+  return obtenerCadenaEvolutiva(entrada[0]);
+}
+
+export function obtenerDatosPokemon(nombrePokemon) {
+  if (!nombrePokemon) return null;
+
+  return starters.find(pokemon => pokemon.nombre === nombrePokemon)
+    || nextEvolution[nombrePokemon]
+    || Object.values(nextEvolution).find(evolucion => evolucion.nombre === nombrePokemon)
+    || null;
+}
+
+export function obtenerBaseCadena(nombrePokemon) {
+  const cadena = obtenerCadenaEvolutiva(nombrePokemon);
+  return cadena[0] || nombrePokemon;
+}
+
+export function esFormaFinal(nombrePokemon) {
+  if (!nombrePokemon) return false;
+  const cadena = obtenerCadenaEvolutiva(nombrePokemon);
+  return cadena[cadena.length - 1] === nombrePokemon;
+}
