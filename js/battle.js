@@ -441,6 +441,10 @@
 
         btnItems.onclick = async () => {
             if (!accionesHabilitadas || !hayItemsUsables()) return;
+            if (hpJugador >= hpMaxJugador) {
+                mostrarAlerta(`${jugador.nombre} ya tiene la vida al máximo.`, "info");
+                return;
+            }
 
             const opcionesItems = obtenerItemsUsables();
             const inputOptions = Object.fromEntries(
@@ -478,8 +482,6 @@
         }
 
         function obtenerItemsUsables() {
-            if (hpJugador >= hpMaxJugador) return [];
-
             return Object.entries(ITEM_DEFINITIONS)
                 .filter(([clave]) => (inventario[clave] || 0) > 0);
         }
