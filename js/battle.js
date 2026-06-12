@@ -442,7 +442,13 @@
         btnItems.onclick = async () => {
             if (!accionesHabilitadas || !hayItemsUsables()) return;
 
-            const opcionesItems = obtenerItemsUsables();
+            const opcionesItems = obtenerItemsUsables().filter(([clave]) => esItemAplicable(clave));
+
+            if (opcionesItems.length === 0) {
+                mostrarAlerta("No hay ítems aplicables en este momento.", "info");
+                return;
+            }
+
             const inputOptions = Object.fromEntries(
                 opcionesItems.map(([clave, cantidad]) => [
                     clave,
@@ -477,9 +483,15 @@
             nums.textContent = `${Math.max(0, actual)} / ${maximo}`;
         }
 
-        function obtenerItemsUsables() {
-            if (hpJugador >= hpMaxJugador) return [];
+        function esItemAplicable(claveItem) {
+            const item = ITEM_DEFINITIONS[claveItem];
+            if (!item) return false;
 
+            const esItemDeCuracion = typeof item.curacion === "number" && item.curacion > 0;
+            return !esItemDeCuracion || hpJugador < hpMaxJugador;
+        }
+
+        function obtenerItemsUsables() {
             return Object.entries(ITEM_DEFINITIONS)
                 .filter(([clave]) => (inventario[clave] || 0) > 0);
         }
@@ -539,7 +551,7 @@
 
         function usarItemTurno(claveItem) {
             const item = ITEM_DEFINITIONS[claveItem];
-            if (!item || (inventario[claveItem] || 0) <= 0 || hpJugador >= hpMaxJugador) return;
+            if (!item || (inventario[claveItem] || 0) <= 0 || !esItemAplicable(claveItem)) return;
 
             bloquear();
             inventario[claveItem] = Math.max(0, (inventario[claveItem] || 0) - 1);
