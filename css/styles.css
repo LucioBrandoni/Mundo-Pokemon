@@ -5,12 +5,24 @@
 :root {
     --nintendo-red: #e60012;
     --nintendo-dark: #1a1a1a;
-    --nintendo-gray: #7c7c7c;
+    --nintendo-gray: #6a6a6a;
     --nintendo-light: #f0f0f0;
     --pixel-border: 4px;
     --pokemon-fire: #FF4422;
     --pokemon-water: #3399FF;
     --pokemon-grass: #33CC33;
+
+    /* Colores semánticos */
+    --hp-green: #3ec43e;
+    --hp-yellow: #f8c000;
+    --hp-red: #e03030;
+    --xp-color: #55ccff;
+    --accent-gold: #FFD700;
+    --accent-blue: #3a7abc;
+    --accent-blue-dark: #2a5a8c;
+    --surface-dark: #242424;
+    --surface-card: #2e2e2e;
+    --border-subtle: rgba(255, 255, 255, 0.18);
 }
 
 body {
@@ -31,12 +43,12 @@ h2 {
 
 /* Estilo de contenedor principal tipo consola */
 form {
-    background-color: var(--nintendo-gray);
-    padding: 20px;
+    background-color: var(--surface-card);
+    padding: 24px;
     border: var(--pixel-border) solid var(--nintendo-light);
     box-shadow: 
-        inset -4px -4px 0 0 rgba(0,0,0,0.3),
-        4px 4px 0 0 rgba(255,255,255,0.2);
+        inset -4px -4px 0 0 rgba(0,0,0,0.35),
+        4px 4px 0 0 rgba(255,255,255,0.15);
     display: inline-block;
     margin: 20px;
     image-rendering: pixelated;
@@ -45,7 +57,7 @@ form {
 input {
     font-family: 'Press Start 2P', cursive;
     margin: 10px;
-    padding: 8px;
+    padding: 10px 12px;
     background: var(--nintendo-light);
     border: var(--pixel-border) solid var(--nintendo-dark);
     outline: none;
@@ -56,35 +68,36 @@ button {
     background-color: var(--nintendo-red);
     color: var(--nintendo-light);
     border: var(--pixel-border) solid var(--nintendo-light);
-    padding: 15px 25px;
-    margin: 10px;
+    padding: 14px 24px;
+    margin: 8px;
     cursor: pointer;
-    transition: all 0.1s ease;
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
     text-transform: uppercase;
+    letter-spacing: 0.04em;
     box-shadow: 
         inset -4px -4px 0 0 rgba(0,0,0,0.3),
-        4px 4px 0 0 rgba(255,255,255,0.2);
+        4px 4px 0 0 rgba(255,255,255,0.18);
 }
 
 button:hover {
-    transform: scale(1.02);
+    transform: scale(1.03);
     box-shadow: 
         inset -2px -2px 0 0 rgba(0,0,0,0.3),
         2px 2px 0 0 rgba(255,255,255,0.2);
 }
 
 button:active {
-    transform: scale(0.98);
+    transform: scale(0.97);
     box-shadow: none;
 }
 
 .tarjeta {
-    background: var(--nintendo-gray);
-    border: var(--pixel-border) solid var(--nintendo-light);
-    padding: 20px;
+    background: var(--surface-card);
+    border: var(--pixel-border) solid rgba(255,255,255,0.3);
+    padding: 24px 20px;
     box-shadow: 
         inset -4px -4px 0 0 rgba(0,0,0,0.3),
-        4px 4px 0 0 rgba(255,255,255,0.2);
+        4px 4px 0 0 rgba(255,255,255,0.12);
     margin-top: 20px;
     image-rendering: pixelated;
 }
@@ -105,15 +118,15 @@ button:active {
 }
 
 .pokemon-card {
-    background-color: var(--nintendo-gray);
-    border: var(--pixel-border) solid var(--nintendo-light);
+    background-color: var(--surface-card);
+    border: var(--pixel-border) solid rgba(255,255,255,0.3);
     padding: 20px;
     text-align: center;
     width: 200px;
-    transition: transform 0.2s ease;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
     box-shadow: 
         inset -4px -4px 0 0 rgba(0,0,0,0.3),
-        4px 4px 0 0 rgba(255,255,255,0.2);
+        4px 4px 0 0 rgba(255,255,255,0.15);
     image-rendering: pixelated;
 }
 
@@ -121,7 +134,7 @@ button:active {
     transform: scale(1.05);
     box-shadow: 
         inset -2px -2px 0 0 rgba(0,0,0,0.3),
-        6px 6px 0 0 rgba(255,255,255,0.2);
+        6px 6px 0 0 rgba(255,255,255,0.22);
 }
 
 .pokemon-card img {
@@ -134,15 +147,13 @@ button:active {
 
 .mensaje-final {
     font-weight: bold;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     color: var(--nintendo-light);
-    background: var(--nintendo-dark);
-    padding: 15px;
-    border: var(--pixel-border) solid var(--nintendo-light);
-    margin-top: 15px;
-    box-shadow: 
-        inset -4px -4px 0 0 rgba(0,0,0,0.3),
-        4px 4px 0 0 rgba(255,255,255,0.2);
+    background: rgba(0,0,0,0.35);
+    padding: 14px;
+    border: 2px solid var(--border-subtle);
+    margin-top: 14px;
+    line-height: 2;
 }
 
 /* Estilos para los botones grandes */
@@ -267,18 +278,19 @@ button:active {
 /* Estilo para SweetAlert personalizado */
 .swal2-popup {
     font-family: 'Press Start 2P', cursive !important;
-    background-color: var(--nintendo-gray) !important;
-    border: var(--pixel-border) solid var(--nintendo-light) !important;
+    background-color: #252530 !important;
+    border: var(--pixel-border) solid rgba(255,255,255,0.3) !important;
     color: var(--nintendo-light) !important;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.6) !important;
 }
 
 .swal2-title {
     color: var(--nintendo-light) !important;
-    text-shadow: 2px 2px 0 var(--nintendo-dark) !important;
+    text-shadow: 2px 2px 0 rgba(0,0,0,0.4) !important;
 }
 
 .swal2-html-container {
-    color: var(--nintendo-light) !important;
+    color: #ddd !important;
 }
 
 .pokemon-card strong {
@@ -288,7 +300,13 @@ button:active {
 .swal2-confirm {
     background-color: var(--nintendo-red) !important;
     font-family: 'Press Start 2P', cursive !important;
-    border: var(--pixel-border) solid var(--nintendo-light) !important;
+    border: 3px solid rgba(255,255,255,0.3) !important;
+}
+
+.swal2-cancel {
+    background-color: #444 !important;
+    font-family: 'Press Start 2P', cursive !important;
+    border: 3px solid rgba(255,255,255,0.2) !important;
 }
 
 /* Colores específicos para cada Pokémon */
@@ -375,37 +393,34 @@ button:active {
 
 /* Estadísticas de batalla */
 .battle-stats {
-    font-size: 0.6rem;
+    font-size: 0.55rem;
     color: var(--nintendo-light);
-    background: var(--nintendo-dark);
-    padding: 10px;
-    border: var(--pixel-border) solid var(--nintendo-light);
+    background: rgba(0,0,0,0.3);
+    padding: 10px 14px;
+    border: 2px solid var(--border-subtle);
     margin-top: 12px;
-    box-shadow: 
-        inset -4px -4px 0 0 rgba(0,0,0,0.3),
-        4px 4px 0 0 rgba(255,255,255,0.2);
+    line-height: 2;
 }
 
 .inventario-container {
-    margin-top: 12px;
-    background: var(--nintendo-dark);
-    border: var(--pixel-border) solid var(--nintendo-light);
-    padding: 10px;
-    box-shadow:
-        inset -4px -4px 0 0 rgba(0,0,0,0.3),
-        4px 4px 0 0 rgba(255,255,255,0.2);
+    margin-top: 14px;
+    background: rgba(0,0,0,0.25);
+    border: 2px solid var(--border-subtle);
+    border-top: 3px solid var(--xp-color);
+    padding: 12px;
 }
 
 .inventario-titulo {
     font-size: 0.6rem;
     text-align: center;
-    margin: 0 0 8px 0;
-    color: #9be0ff;
+    margin: 0 0 10px 0;
+    color: var(--xp-color);
+    text-shadow: 1px 1px 0 rgba(0,0,0,0.5);
 }
 
 .inventario-grid {
     display: flex;
-    gap: 8px;
+    gap: 10px;
     justify-content: center;
     flex-wrap: wrap;
 }
@@ -415,18 +430,22 @@ button:active {
     align-items: center;
     gap: 6px;
     font-size: 0.42rem;
-    background: var(--nintendo-gray);
-    border: 2px solid var(--nintendo-light);
-    padding: 6px 8px;
-    box-shadow: inset -2px -2px 0 rgba(0,0,0,0.3);
+    background: rgba(255,255,255,0.08);
+    border: 2px solid rgba(255,255,255,0.25);
+    padding: 7px 10px;
+    box-shadow: inset -2px -2px 0 rgba(0,0,0,0.25);
+}
+
+.item-badge strong {
+    color: var(--xp-color);
 }
 
 .rival-status {
     margin: 10px 0 0 0;
     text-align: center;
-    font-size: 0.45rem;
-    color: #ddd;
-    line-height: 1.8;
+    font-size: 0.42rem;
+    color: #bbb;
+    line-height: 2;
 }
 
 /* Historial de batallas */
@@ -436,7 +455,7 @@ button:active {
 }
 
 .historial-titulo {
-    font-size: 0.65rem;
+    font-size: 0.6rem;
     text-align: center;
     color: var(--nintendo-light);
     margin-bottom: 8px;
@@ -449,73 +468,74 @@ button:active {
     align-items: center;
     flex-wrap: wrap;
     gap: 6px;
-    font-size: 0.5rem;
-    padding: 6px 10px;
+    font-size: 0.46rem;
+    padding: 7px 10px;
     margin-bottom: 4px;
-    border: 2px solid var(--nintendo-light);
-    box-shadow: inset -2px -2px 0 0 rgba(0,0,0,0.3), 2px 2px 0 0 rgba(255,255,255,0.2);
+    border: 2px solid rgba(255,255,255,0.2);
+    box-shadow: inset -2px -2px 0 0 rgba(0,0,0,0.3);
 }
 
 .historial-victoria {
-    background: rgba(0, 80, 0, 0.6);
+    background: rgba(0, 90, 0, 0.5);
+    border-left: 4px solid var(--hp-green) !important;
 }
 
 .historial-derrota {
-    background: rgba(100, 0, 0, 0.6);
+    background: rgba(110, 0, 0, 0.5);
+    border-left: 4px solid var(--hp-red) !important;
 }
 
 .historial-detalle {
-    color: #ccc;
+    color: #bbb;
 }
 
 .historial-fecha {
-    color: #aaa;
-    font-size: 0.45rem;
+    color: #888;
+    font-size: 0.4rem;
 }
 
 .historial-badge {
     display: inline-block;
     margin-left: 6px;
     padding: 2px 5px;
-    border: 1px solid var(--nintendo-light);
+    border: 1px solid rgba(255,255,255,0.3);
     font-size: 0.35rem;
     text-transform: uppercase;
     letter-spacing: 0.04em;
 }
 
 .historial-badge-rival {
-    background: rgba(72, 48, 140, 0.9);
+    background: rgba(80, 55, 160, 0.9);
 }
 
 .historial-badge-legendario {
-    background: rgba(172, 120, 0, 0.9);
+    background: rgba(160, 110, 0, 0.9);
 }
 
 .badge-efectivo {
-    color: #FFD700;
-    font-size: 0.55rem;
+    color: var(--accent-gold);
+    font-size: 0.52rem;
 }
 
 /* Nivel y barra de experiencia */
 .nivel-xp {
-    margin-top: 12px;
-    background: var(--nintendo-dark);
-    border: var(--pixel-border) solid var(--nintendo-light);
-    padding: 10px;
-    box-shadow:
-        inset -4px -4px 0 0 rgba(0,0,0,0.3),
-        4px 4px 0 0 rgba(255,255,255,0.2);
+    margin-top: 14px;
+    background: rgba(0,0,0,0.3);
+    border: 2px solid var(--border-subtle);
+    border-top: 3px solid var(--accent-gold);
+    padding: 12px;
 }
 
 .nivel-texto {
-    font-size: 0.65rem;
-    margin: 0 0 6px 0;
-    color: #FFD700;
+    font-size: 0.6rem;
+    margin: 0 0 8px 0;
+    color: var(--accent-gold);
+    text-shadow: 1px 1px 0 rgba(0,0,0,0.5);
 }
 
 .xp-bar-container {
-    background: #333;
-    border: 2px solid var(--nintendo-light);
+    background: rgba(0,0,0,0.4);
+    border: 2px solid rgba(255,255,255,0.2);
     height: 12px;
     width: 100%;
     box-sizing: border-box;
@@ -524,15 +544,14 @@ button:active {
 
 .xp-bar {
     height: 100%;
-    background: linear-gradient(90deg, #00cc44, #66ff88);
+    background: linear-gradient(90deg, var(--xp-color), #99eeff);
     transition: width 1.2s cubic-bezier(0.22, 1, 0.36, 1);
-    image-rendering: pixelated;
 }
 
 .xp-texto {
-    font-size: 0.5rem;
-    color: #aaa;
-    margin: 4px 0 0 0;
+    font-size: 0.46rem;
+    color: #999;
+    margin: 5px 0 0 0;
 }
 
 /* ============================================================
@@ -542,7 +561,7 @@ button:active {
 #battleScreen {
     position: fixed;
     inset: 0;
-    background: var(--nintendo-dark);
+    background: #12121a;
     z-index: 9100;
     display: flex;
     flex-direction: column;
@@ -558,20 +577,25 @@ button:active {
     max-width: 580px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
 }
 
 .battle-arena {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    background: linear-gradient(180deg, #2a4a2a 0%, #1c1c1c 55%, #3a3020 100%);
-    border: var(--pixel-border) solid var(--nintendo-light);
+    gap: 8px;
+    background: linear-gradient(180deg,
+        #1e3c2a 0%,
+        #264a32 35%,
+        #161614 52%,
+        #2c2212 100%);
+    border: var(--pixel-border) solid rgba(255,255,255,0.35);
     padding: 16px;
     box-shadow:
-        inset -4px -4px 0 0 rgba(0,0,0,0.3),
-        4px 4px 0 0 rgba(255,255,255,0.2);
-    min-height: 210px;
+        inset 0 1px 0 rgba(255,255,255,0.1),
+        inset -4px -4px 0 0 rgba(0,0,0,0.4),
+        4px 4px 0 0 rgba(255,255,255,0.1);
+    min-height: 220px;
 }
 
 .battle-enemy-section {
@@ -587,18 +611,21 @@ button:active {
 }
 
 .battle-info-box {
-    background: var(--nintendo-gray);
-    border: 3px solid var(--nintendo-light);
+    background: rgba(20, 20, 20, 0.82);
+    border: 2px solid rgba(255,255,255,0.35);
+    border-bottom: 3px solid rgba(255,255,255,0.15);
     padding: 8px 12px;
     min-width: 190px;
-    box-shadow: inset -2px -2px 0 rgba(0,0,0,0.3);
+    box-shadow: inset -2px -2px 0 rgba(0,0,0,0.4), 1px 1px 0 rgba(255,255,255,0.08);
+    backdrop-filter: blur(2px);
 }
 
 .battle-pokemon-name {
     font-size: 0.55rem;
     color: var(--nintendo-light);
-    margin: 0 0 6px 0;
+    margin: 0 0 7px 0;
     text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
 .battle-hp-bar-wrap {
@@ -611,30 +638,30 @@ button:active {
 .hp-label {
     font-family: 'Press Start 2P', cursive;
     font-size: 0.45rem;
-    color: var(--nintendo-light);
+    color: #aaa;
     white-space: nowrap;
 }
 
 .battle-hp-bar-container {
     flex: 1;
-    background: #333;
-    border: 2px solid var(--nintendo-light);
-    height: 10px;
+    background: rgba(0,0,0,0.5);
+    border: 2px solid rgba(255,255,255,0.2);
+    height: 12px;
     overflow: hidden;
 }
 
 .battle-hp-bar {
     height: 100%;
-    background: #00cc44;
-    transition: width 0.5s ease, background-color 0.5s ease;
+    background: var(--hp-green);
+    transition: width 0.55s ease, background-color 0.55s ease;
 }
 
-.battle-hp-bar.hp-warning { background: #f8c000; }
-.battle-hp-bar.hp-danger  { background: #ee3333; }
+.battle-hp-bar.hp-warning { background: var(--hp-yellow); }
+.battle-hp-bar.hp-danger  { background: var(--hp-red); }
 
 .battle-hp-numbers {
     font-size: 0.4rem;
-    color: #aaa;
+    color: #999;
     margin: 0;
     text-align: right;
 }
@@ -650,59 +677,61 @@ button:active {
 .battle-player-sprite { align-self: flex-end; }
 
 .battle-log-box {
-    background: var(--nintendo-gray);
-    border: var(--pixel-border) solid var(--nintendo-light);
+    background: rgba(20, 20, 28, 0.92);
+    border: var(--pixel-border) solid rgba(255,255,255,0.3);
+    border-left: 4px solid var(--xp-color);
     padding: 12px 16px;
     min-height: 56px;
     display: flex;
     align-items: center;
     box-shadow:
-        inset -4px -4px 0 0 rgba(0,0,0,0.3),
-        4px 4px 0 0 rgba(255,255,255,0.2);
+        inset -4px -4px 0 0 rgba(0,0,0,0.35),
+        4px 4px 0 0 rgba(255,255,255,0.08);
 }
 
 #battleLogText {
     font-size: 0.5rem;
     color: var(--nintendo-light);
     margin: 0;
-    line-height: 1.9;
+    line-height: 2;
 }
 
 .battle-action-panel {
     display: flex;
-    align-items: center;
-    gap: 10px;
+    align-items: stretch;
+    gap: 8px;
 }
 
 .battle-moves-grid {
     flex: 1;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 8px;
+    gap: 6px;
 }
 
 .battle-move-btn {
     font-family: 'Press Start 2P', cursive;
-    padding: 8px 10px;
-    border: 3px solid var(--nintendo-light);
-    border-left-width: 6px;
+    padding: 9px 10px;
+    border: 2px solid rgba(255,255,255,0.2);
+    border-left-width: 5px;
     cursor: pointer;
-    background: var(--nintendo-dark);
+    background: rgba(255,255,255,0.06);
     color: var(--nintendo-light);
-    font-size: 0.42rem;
+    font-size: 0.44rem;
     text-align: left;
-    line-height: 1.7;
+    line-height: 1.8;
     box-shadow: inset -2px -2px 0 rgba(0,0,0,0.3);
-    transition: transform 0.1s, box-shadow 0.1s;
+    transition: transform 0.1s, background 0.1s, box-shadow 0.1s;
 }
 
 .battle-move-btn:hover:not(:disabled) {
     transform: scale(1.04);
+    background: rgba(255,255,255,0.12);
     box-shadow: inset -1px -1px 0 rgba(0,0,0,0.3);
 }
 
 .battle-move-btn:disabled {
-    opacity: 0.38;
+    opacity: 0.35;
     cursor: not-allowed;
 }
 
@@ -714,55 +743,59 @@ button:active {
 
 .battle-move-pp {
     font-size: 0.38rem;
-    color: #bbb;
+    color: #aaa;
 }
 
 .battle-move-power {
     font-size: 0.38rem;
-    color: #eee;
+    color: #ddd;
 }
 
 .battle-utility-actions {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
     align-self: stretch;
+    min-width: 76px;
 }
 
 .battle-item-btn,
 .battle-flee-btn {
     font-family: 'Press Start 2P', cursive;
-    font-size: 0.45rem;
-    padding: 10px 14px;
+    font-size: 0.42rem;
+    padding: 10px 10px;
     color: var(--nintendo-light);
-    border: 3px solid var(--nintendo-light);
+    border: 2px solid rgba(255,255,255,0.25);
     cursor: pointer;
     white-space: nowrap;
-    box-shadow: inset -2px -2px 0 rgba(0,0,0,0.3);
-    transition: transform 0.1s;
-    align-self: stretch;
+    box-shadow: inset -2px -2px 0 rgba(0,0,0,0.35);
+    transition: transform 0.1s, filter 0.1s;
+    flex: 1;
     display: flex;
     align-items: center;
     justify-content: center;
-    line-height: 1.6;
+    line-height: 1.7;
+    text-align: center;
 }
 
 .battle-item-btn {
-    background: #226688;
+    background: var(--accent-blue-dark);
+    border-top-color: rgba(255,255,255,0.35);
 }
 
 .battle-flee-btn {
-    background: #555;
+    background: #444;
 }
 
 .battle-item-btn:hover:not(:disabled),
 .battle-flee-btn:hover:not(:disabled) {
-    transform: scale(1.04);
+    transform: scale(1.05);
+    filter: brightness(1.15);
 }
 
 .battle-item-btn:disabled,
 .battle-flee-btn:disabled {
-    opacity: 0.38;
+    opacity: 0.35;
     cursor: not-allowed;
 }
 
@@ -772,20 +805,18 @@ button:active {
 
 .logros-container {
     margin-top: 16px;
-    background: var(--nintendo-dark);
-    border: var(--pixel-border) solid var(--nintendo-light);
-    padding: 10px;
-    box-shadow:
-        inset -4px -4px 0 0 rgba(0,0,0,0.3),
-        4px 4px 0 0 rgba(255,255,255,0.2);
+    background: rgba(0,0,0,0.25);
+    border: 2px solid var(--border-subtle);
+    border-top: 3px solid var(--accent-gold);
+    padding: 12px;
 }
 
 .logros-titulo {
     font-size: 0.6rem;
     text-align: center;
-    color: #FFD700;
-    margin: 0 0 8px 0;
-    text-shadow: 1px 1px 0 var(--nintendo-dark);
+    color: var(--accent-gold);
+    margin: 0 0 10px 0;
+    text-shadow: 1px 1px 0 rgba(0,0,0,0.5);
 }
 
 .logros-grid {
@@ -796,15 +827,15 @@ button:active {
 }
 
 .logro-badge {
-    background: var(--nintendo-gray);
-    border: 2px solid #FFD700;
-    padding: 5px 8px;
+    background: rgba(255, 215, 0, 0.1);
+    border: 2px solid var(--accent-gold);
+    padding: 5px 9px;
     font-size: 0.4rem;
     color: var(--nintendo-light);
     display: flex;
     align-items: center;
-    gap: 4px;
-    box-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+    gap: 5px;
+    box-shadow: 1px 1px 0 rgba(0,0,0,0.4);
     cursor: default;
 }
 
@@ -813,9 +844,9 @@ button:active {
 }
 
 .logro-bloqueado {
-    background: rgba(40, 40, 40, 0.8);
-    border-color: #555;
-    color: #888;
+    background: rgba(30, 30, 30, 0.7);
+    border-color: #444;
+    color: #777;
     flex-direction: column;
     align-items: center;
     gap: 3px;
@@ -824,12 +855,12 @@ button:active {
 }
 
 .logro-bloqueado span {
-    color: #888;
+    color: #777;
 }
 
 .logro-pista {
     font-size: 0.32rem !important;
-    color: #666 !important;
+    color: #555 !important;
     line-height: 1.5;
     display: block;
     margin-top: 2px;
@@ -844,45 +875,49 @@ button:active {
 .btn-ver-logros {
     font-family: 'Press Start 2P', cursive;
     font-size: 0.38rem;
-    background: #2a4a6a;
+    background: var(--accent-blue-dark);
     color: var(--nintendo-light);
-    border: 2px solid #7ab;
-    padding: 6px 10px;
-    margin-top: 8px;
+    border: 2px solid rgba(100, 160, 200, 0.5);
+    padding: 7px 10px;
+    margin-top: 10px;
     cursor: pointer;
     display: block;
     width: 100%;
+    box-sizing: border-box;
     box-shadow: inset -2px -2px 0 rgba(0,0,0,0.3);
-    transition: transform 0.1s;
+    transition: transform 0.1s, filter 0.1s;
+    text-transform: uppercase;
 }
 
 .btn-ver-logros:hover {
     transform: scale(1.02);
+    filter: brightness(1.15);
 }
 
 /* Récord histórico */
 
 .record-container {
-    margin-top: 12px;
-    background: linear-gradient(135deg, #1a2a1a 0%, #1a1a2a 100%);
-    border: var(--pixel-border) solid #FFD700;
-    padding: 10px;
+    margin-top: 14px;
+    background: linear-gradient(135deg, rgba(30,50,20,0.6) 0%, rgba(20,20,40,0.6) 100%);
+    border: 2px solid var(--accent-gold);
+    border-top: 3px solid var(--accent-gold);
+    padding: 12px;
     box-shadow:
-        inset -4px -4px 0 0 rgba(0,0,0,0.3),
-        4px 4px 0 0 rgba(255,215,0,0.15);
+        inset 0 1px 0 rgba(255,215,0,0.1),
+        2px 2px 0 rgba(0,0,0,0.3);
 }
 
 .record-titulo {
     font-size: 0.6rem;
     text-align: center;
-    color: #FFD700;
-    margin: 0 0 8px 0;
-    text-shadow: 1px 1px 0 var(--nintendo-dark);
+    color: var(--accent-gold);
+    margin: 0 0 10px 0;
+    text-shadow: 1px 1px 0 rgba(0,0,0,0.5);
 }
 
 .record-grid {
     display: flex;
-    gap: 8px;
+    gap: 10px;
     justify-content: center;
     flex-wrap: wrap;
 }
@@ -891,11 +926,11 @@ button:active {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 3px;
-    background: var(--nintendo-gray);
-    border: 2px solid #FFD700;
-    padding: 8px 12px;
-    min-width: 80px;
+    gap: 4px;
+    background: rgba(255,215,0,0.08);
+    border: 2px solid rgba(255,215,0,0.5);
+    padding: 10px 16px;
+    min-width: 88px;
     box-shadow: inset -2px -2px 0 rgba(0,0,0,0.3);
 }
 
@@ -905,18 +940,18 @@ button:active {
 
 .record-label {
     font-size: 0.35rem;
-    color: #ccc;
+    color: #bbb;
     text-align: center;
 }
 
 .record-valor {
     font-size: 0.7rem;
-    color: #FFD700;
+    color: var(--accent-gold);
 }
 
 .record-fecha {
     font-size: 0.3rem;
-    color: #aaa;
+    color: #999;
     margin-top: 2px;
 }
 
@@ -937,17 +972,18 @@ button:active {
     font-family: 'Press Start 2P', cursive;
     font-size: 0.65rem;
     padding: 8px 10px;
-    background: var(--nintendo-gray);
+    background: var(--surface-dark);
     color: var(--nintendo-light);
-    border: 3px solid var(--nintendo-light);
+    border: 2px solid rgba(255,255,255,0.3);
     cursor: pointer;
-    box-shadow: inset -2px -2px 0 rgba(0,0,0,0.3), 2px 2px 0 rgba(255,255,255,0.15);
-    transition: transform 0.1s;
+    box-shadow: inset -2px -2px 0 rgba(0,0,0,0.35), 2px 2px 0 rgba(255,255,255,0.1);
+    transition: transform 0.1s, filter 0.1s;
     line-height: 1;
 }
 
 .settings-btn:hover {
-    transform: scale(1.08);
+    transform: scale(1.1);
+    filter: brightness(1.2);
 }
 
 .settings-btn:active {
@@ -962,7 +998,12 @@ button:active {
 [data-theme="light"] {
     --nintendo-dark:  #dcdcdc;
     --nintendo-light: #1a1a1a;
-    --nintendo-gray:  #b8b8b8;
+    --nintendo-gray:  #b0b0b0;
+    --surface-dark: #d0d0d0;
+    --surface-card: #c8c8c8;
+    --border-subtle: rgba(0,0,0,0.18);
+    --xp-color: #1a7ab8;
+    --accent-gold: #b87800;
 }
 
 [data-theme="light"] body {
@@ -971,22 +1012,44 @@ button:active {
 }
 
 [data-theme="light"] .battle-arena {
-    background: linear-gradient(180deg, #b8d4b8 0%, #d0d0d0 55%, #d0c8a0 100%);
+    background: linear-gradient(180deg,
+        #7ab87a 0%,
+        #5a9a5a 40%,
+        #c8c0a0 55%,
+        #b8aa80 100%);
+}
+
+[data-theme="light"] #battleScreen {
+    background: #e0e0e0;
+}
+
+[data-theme="light"] .battle-log-box {
+    background: rgba(200,200,200,0.92);
+    border-left-color: var(--xp-color);
+}
+
+[data-theme="light"] .battle-move-btn {
+    background: rgba(0,0,0,0.07);
+    color: var(--nintendo-light);
+}
+
+[data-theme="light"] .battle-item-btn {
+    background: var(--accent-blue);
+}
+
+[data-theme="light"] .battle-info-box {
+    background: rgba(230,230,230,0.88);
+    border-color: rgba(0,0,0,0.3);
 }
 
 [data-theme="light"] .battle-hp-bar-container,
 [data-theme="light"] .xp-bar-container {
-    background: #aaaaaa;
-    border-color: var(--nintendo-light);
-}
-
-[data-theme="light"] .battle-move-btn {
-    background: #c8c8c8;
-    color: var(--nintendo-light);
+    background: #bbb;
+    border-color: rgba(0,0,0,0.25);
 }
 
 [data-theme="light"] .record-container {
-    background: linear-gradient(135deg, #c8d8c8 0%, #c8c8d8 100%);
+    background: linear-gradient(135deg, rgba(180,200,170,0.6) 0%, rgba(170,170,200,0.6) 100%);
 }
 
 [data-theme="light"] .record-label,
@@ -995,25 +1058,31 @@ button:active {
 [data-theme="light"] .xp-texto,
 [data-theme="light"] .battle-hp-numbers,
 [data-theme="light"] .rival-status {
-    color: #444;
+    color: #555;
 }
 
 [data-theme="light"] .logro-bloqueado {
-    background: rgba(200, 200, 200, 0.8);
+    background: rgba(180, 180, 180, 0.8);
     border-color: #999;
     color: #555;
 }
 
+[data-theme="light"] .logro-bloqueado span,
 [data-theme="light"] .logro-bloqueado .logro-pista {
     color: #666;
-    font-size: 0.32rem !important;
-    display: block;
-    margin-top: 2px;
 }
 
 [data-theme="light"] .inventario-container,
-[data-theme="light"] .nivel-xp {
-    background: #c8c8c8;
+[data-theme="light"] .nivel-xp,
+[data-theme="light"] .battle-stats,
+[data-theme="light"] .historial-item,
+[data-theme="light"] .logros-container {
+    background: rgba(0,0,0,0.08);
+}
+
+[data-theme="light"] .item-badge {
+    background: rgba(0,0,0,0.06);
+    border-color: rgba(0,0,0,0.2);
 }
 
 /* SweetAlert2 en tema claro */

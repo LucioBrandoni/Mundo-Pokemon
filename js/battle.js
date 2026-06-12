@@ -450,9 +450,9 @@
             }
 
             const inputOptions = Object.fromEntries(
-                opcionesItems.map(([clave, cantidad]) => [
+                opcionesItems.map(([clave]) => [
                     clave,
-                    `${ITEM_DEFINITIONS[clave].emoji} ${ITEM_DEFINITIONS[clave].nombre} (+${ITEM_DEFINITIONS[clave].curacion} HP) · x${cantidad}`,
+                    `${ITEM_DEFINITIONS[clave].emoji} ${ITEM_DEFINITIONS[clave].nombre} (+${ITEM_DEFINITIONS[clave].curacion} HP) · x${inventario[clave] || 0}`,
                 ])
             );
 
