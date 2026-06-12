@@ -441,12 +441,19 @@
 
         btnItems.onclick = async () => {
             if (!accionesHabilitadas || !hayItemsUsables()) return;
-            if (hpJugador >= hpMaxJugador) {
+
+            const opcionesItems = obtenerItemsUsables().filter(([clave]) => {
+                const item = ITEM_DEFINITIONS[clave];
+                if (!item) return false;
+                const esItemDeCuracion = typeof item.curacion === "number" && item.curacion > 0;
+                return !esItemDeCuracion || hpJugador < hpMaxJugador;
+            });
+
+            if (opcionesItems.length === 0) {
                 mostrarAlerta(`${jugador.nombre} ya tiene la vida al máximo.`, "info");
                 return;
             }
 
-            const opcionesItems = obtenerItemsUsables();
             const inputOptions = Object.fromEntries(
                 opcionesItems.map(([clave, cantidad]) => [
                     clave,
