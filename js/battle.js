@@ -442,12 +442,7 @@
         btnItems.onclick = async () => {
             if (!accionesHabilitadas || !hayItemsUsables()) return;
 
-            const opcionesItems = obtenerItemsUsables().filter(([clave]) => {
-                const item = ITEM_DEFINITIONS[clave];
-                if (!item) return false;
-                const esItemDeCuracion = typeof item.curacion === "number" && item.curacion > 0;
-                return !esItemDeCuracion || hpJugador < hpMaxJugador;
-            });
+            const opcionesItems = obtenerItemsUsables().filter(([clave]) => esItemAplicable(clave));
 
             if (opcionesItems.length === 0) {
                 mostrarAlerta(`${jugador.nombre} ya tiene la vida al máximo.`, "info");
@@ -486,6 +481,14 @@
             if (pct <= 20) bar.classList.add('hp-danger');
             else if (pct <= 50) bar.classList.add('hp-warning');
             nums.textContent = `${Math.max(0, actual)} / ${maximo}`;
+        }
+
+        function esItemAplicable(claveItem) {
+            const item = ITEM_DEFINITIONS[claveItem];
+            if (!item || (inventario[claveItem] || 0) <= 0) return false;
+
+            const esItemDeCuracion = typeof item.curacion === "number" && item.curacion > 0;
+            return !esItemDeCuracion || hpJugador < hpMaxJugador;
         }
 
         function obtenerItemsUsables() {
@@ -548,7 +551,7 @@
 
         function usarItemTurno(claveItem) {
             const item = ITEM_DEFINITIONS[claveItem];
-            if (!item || (inventario[claveItem] || 0) <= 0 || hpJugador >= hpMaxJugador) return;
+            if (!item || !esItemAplicable(claveItem)) return;
 
             bloquear();
             inventario[claveItem] = Math.max(0, (inventario[claveItem] || 0) - 1);
